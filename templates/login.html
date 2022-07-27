@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Page</title>
+  </head>
+  <style>
+    form {
+      display: block;
+      margin-top: auto;
+      margin-left: auto;
+      margin-right: auto;
+      background-color: rgb(13, 28, 232);
+      height: 20%;
+      width: 25%;
+      margin-top: 10%;
+      font-size: 50px;
+      text-align: center;
+    }
+    input {
+      font-size: 25px;
+    }
+  </style>
+  <body>
+    <form action="authenticate" method="post">
+      {% csrf_token %}
+      <label for="Username">Username:</label><br />
+      <input type="text" id="Username" name="Username" value="" /><br />
+      <label for="Password">Password:</label><br />
+      <input type="password" id="pass" name="Password" value="" /><br /><br />
+      <input type="submit" value="Submit" />
+    </form>
+  </body>
+</html>

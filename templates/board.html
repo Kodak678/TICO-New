@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" /> -->
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Board</title>
+  </head>
+  <style>
+    .chessboard {
+      width: 640px;
+      height: 640px;
+      margin: 20px;
+      border: 25px solid #333;
+    }
+    .black {
+      float: left;
+      width: 80px;
+      height: 80px;
+      background-color: burlywood;
+      font-size: 50px;
+      text-align: center;
+      display: table-cell;
+      vertical-align: middle;
+    }
+    .white {
+      float: left;
+      width: 80px;
+      height: 80px;
+      background-color: rgb(255, 255, 255);
+      font-size: 50px;
+      text-align: center;
+      display: table-cell;
+      vertical-align: middle;
+    }
+    .green {
+      float: left;
+      width: 80px;
+      height: 80px;
+      background-color: rgb(24, 255, 3);
+      font-size: 50px;
+      text-align: center;
+      display: table-cell;
+      vertical-align: middle;
+    }
+  </style>
+  <body>
+    <div class="chessboard">
+      <!-- 1st -->
+      <button rank="1" file="1" player="" piece ="" class="white" id="a8"></button>
+      <button rank="1" file="2" player="" piece ="" class="black" id="b8"></button>
+      <button rank="1" file="3" player="" piece ="" class="white" id="c8"></button>
+      <button rank="1" file="4" player="" piece ="" class="black" id="d8"></button>
+      <button rank="1" file="5" player="" piece ="" class="white" id="e8"></button>
+      <button rank="1" file="6" player="" piece =""class="black" id="f8"></button>
+      <button rank="1" file="7" player="" piece =""class="white" id="g8"></button>
+      <button rank="1" file="8" player="" piece =""class="black" id="h8"></button>
+      <!-- 2nd -->
+      <button rank="2" file="1" player="" piece ="" class="black" id="a7"></button>
+      <button rank="2" file="2" player="" piece =""class="white" id="b7"></button>
+      <button rank="2" file="3" player="" piece =""class="black" id="c7"></button>
+      <button rank="2" file="4" player="" piece =""class="white" id="d7"></button>
+      <button rank="2" file="5" player="" piece =""class="black" id="e7"></button>
+      <button rank="2" file="6" player="" piece =""class="white" id="f7"></button>
+      <button rank="2" file="7" player="" piece =""class="black" id="g7"></button>
+      <button rank="2" file="8" player="" piece =""class="white" id="h7"></button>
+      <!-- 3th -->
+      <button rank="3" file="1" player="" piece =""class="white" id="a6"></button>
+      <button rank="3" file="2" player="" piece =""class="black" id="b6"></button>
+      <button rank="3" file="3" player="" piece =""class="white" id="c6"></button>
+      <button rank="3" file="4" player="" piece =""class="black" id="d6"></button>
+      <button rank="3" file="5" player="" piece =""class="white" id="e6"></button>
+      <button rank="3" file="6" player="" piece =""class="black" id="f6"></button>
+      <button rank="3" file="7" player="" piece =""class="white" id="g6"></button>
+      <button rank="3" file="8" player="" piece =""class="black" id="h6"></button>
+      <!-- 4st -->
+      <button rank="4" file="1" player="" piece ="" class="black" id="a5"></button>
+      <button rank="4" file="2" player="" piece ="" class="white" id="b5"></button>
+      <button rank="4" file="3" player="" piece =""class="black" id="c5"></button>
+      <button rank="4" file="4" player="" piece =""class="white" id="d5"></button>
+      <button rank="4" file="5" player="" piece =""class="black" id="e5"></button>
+      <button rank="4" file="6" player="" piece =""class="white" id="f5"></button>
+      <button rank="4" file="7" player="" piece =""class="black" id="g5"></button>
+      <button rank="4" file="8" player="" piece =""class="white" id="h5"></button>
+      <!-- 5th -->
+      <button rank="5" file="1" player="" piece ="" class="white" id="a4"></button>
+      <button rank="5" file="2" player="" piece =""class="black" id="b4"></button>
+      <button rank="5" file="3" player="" piece =""class="white" id="c4"></button>
+      <button rank="5" file="4" player="" piece =""class="black" id="d4"></button>
+      <button rank="5" file="5" player="" piece =""class="white" id="e4"></button>
+      <button rank="5" file="6" player="" piece =""class="black" id="f4"></button>
+      <button rank="5" file="7" player="" piece =""class="white" id="g4"></button>
+      <button rank="5" file="8" player="" piece =""class="black" id="h4"></button>
+      <!-- 6th -->
+      <button rank="6" file="1" player="" piece =""class="black" id="a3"></button>
+      <button rank="6" file="2" player=""piece ="" class="white" id="b3"></button>
+      <button rank="6" file="3" player="" piece =""class="black" id="c3"></button>
+      <button rank="6" file="4" player=""piece ="" class="white" id="d3"></button>
+      <button rank="6" file="5" player="" piece =""class="black" id="e3"></button>
+      <button rank="6" file="6" player="" piece =""class="white" id="f3"></button>
+      <button rank="6" file="7" player="" piece =""class="black" id="g3"></button>
+      <button rank="6" file="8" player="" piece =""class="white" id="h3"></button>
+      <!-- 7th -->
+      <button rank="7" file="1" player="" piece =""class="white" id="a2"></button>
+      <button rank="7" file="2" player="" piece =""class="black" id="b2"></button>
+      <button rank="7" file="3" player="" piece =""class="white" id="c2"></button>
+      <button rank="7" file="4" player="" piece =""class="black" id="d2"></button>
+      <button rank="7" file="5" player="" piece =""class="white" id="e2"></button>
+      <button rank="7" file="6" player="" piece =""class="black" id="f2"></button>
+      <button rank="7" file="7" player="" piece =""class="white" id="g2"></button>
+      <button rank="7" file="8" player="" piece =""class="black" id="h2"></button>
+      <!-- 8th -->
+      <button rank="8" file="1" player="" piece =""class="black" id="a1"></button>
+      <button rank="8" file="2" player="" piece =""class="white" id="b1"></button>
+      <button rank="8" file="3" player="" piece =""class="black" id="c1"></button>
+      <button rank="8" file="4" player="" piece =""class="white" id="d1"></button>
+      <button rank="8" file="5" player="" piece =""class="black" id="e1"></button>
+      <button rank="8" file="6" player="" piece =""class="white" id="f1"></button>
+      <button rank="8" file="7" player="" piece =""class="black" id="g1"></button>
+      <button rank="8" file="8" player="" piece =""class="white" id="h1"></button>
+    </div>
+    <py-script>
+      
+      
+from js import document
+class Piece:
+  def __init__(self,name,color,value,symbol):
+      self.name = name
+      self.color = color
+      self.value = value
+      self.symbol = symbol
+      self.moves = []
+  def getSymbol(self):
+      return self.symbol
+  
+  def getName(self):
+      return self.name
+
+  def getValue(self):
+      return self.value
+  
+  def getSymbol(self):
+      return self.symbol
+  
+  def getColor(self):
+      return self.color
+
+  def addMoves(self,move):
+      self.moves.append(move)
+      
+  def getMoves(self):
+      return self.moves
+        
+class Pawn(Piece):
+    def __init__(self,color,symbol):
+        super().__init__("pawn",color,10.0,symbol)
+        
+
+class Rook(Piece):
+    def __init__(self,color,symbol):
+        super().__init__("rook",color,50.0,symbol)
+        
+
+class Knight(Piece):
+    def __init__(self,color,symbol):
+        super().__init__("knight",color,30.0,symbol)
+        
+
+class Bishop(Piece):
+    def __init__(self,color,symbol):
+        super().__init__("bishop",color,30.0,symbol)
+
+class Queen(Piece):
+    def __init__(self,color,symbol):
+        super().__init__("queen",color,90.0,symbol)
+
+class King(Piece):
+    def __init__(self,color,symbol):
+        super().__init__("king",color,900.0,symbol)
+def reset_game():
+  BlackPawn = Pawn("black","&#9823")
+  BlackRook = Rook("black","&#9820;")
+  BlackKnight = Knight("black","&#9822;")
+  BlackBishop = Bishop("black","&#9821;")
+  BlackQueen = Queen("black","&#9819;")
+  BlackKing = King("black","&#9818;")
+
+  WhitePawn = Pawn("white","&#9817;")
+  WhiteRook = Rook("white","&#9814;")
+  WhiteKnight = Knight("white","&#9816;")
+  WhiteBishop = Bishop("white","&#9815;")
+  WhiteQueen = Queen("white","&#9813;")
+  WhiteKing = King("white","&#9812;")
+
+  BlackPawns = ["a7","b7","c7","d7","e7","f7","g7","h7"]
+  for i in BlackPawns:
+      pyscript.write(i,BlackPawn.getSymbol())
+  pyscript.write("a8",BlackRook.getSymbol())
+  pyscript.write("h8",BlackRook.getSymbol())
+  pyscript.write("b8",BlackKnight.getSymbol())
+  pyscript.write("g8",BlackKnight.getSymbol())
+  pyscript.write("c8",BlackBishop.getSymbol())
+  pyscript.write("f8",BlackBishop.getSymbol())
+  pyscript.write("d8",BlackQueen.getSymbol())
+  pyscript.write("e8",BlackKing.getSymbol())
+
+
+  WhitePawns = ["a2","b2","c2","d2","e2","f2","g2","h2"]
+  for i in WhitePawns:
+        pyscript.write(i,WhitePawn.getSymbol())
+
+  pyscript.write("a1",WhiteRook.getSymbol())
+  pyscript.write("h1",WhiteRook.getSymbol())
+  pyscript.write("b1",WhiteKnight.getSymbol())
+  pyscript.write("g1",WhiteKnight.getSymbol())
+  pyscript.write("c1",WhiteBishop.getSymbol())
+  pyscript.write("f1",WhiteBishop.getSymbol())
+  pyscript.write("d1",WhiteQueen.getSymbol())
+  pyscript.write("e1",WhiteKing.getSymbol())
+
+reset_game()
+    </py-script>
+  </body>
+</html>
