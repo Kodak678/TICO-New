@@ -26,5 +26,6 @@ urlpatterns = [
     path('templates/register.html', views.register),
     path('templates/mainpage.html',views.home),
     path('templates/authenticate',views.authenticate),
+    path('boardStates', views.boardStates),
     path('',views.home)
 ]
