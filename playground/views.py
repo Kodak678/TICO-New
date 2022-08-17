@@ -1,13 +1,31 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+import chess
+import chess.engine
+
+from stockfish import Stockfish
+
+from numpy import load
+import numpy as np
+
+board = chess.Board()
+stockfish = Stockfish(path="static\stockfish_15_win_x64_avx2\stockfish_15_x64_avx2.exe")
+engine = chess.engine.SimpleEngine.popen_uci(r"static\stockfish_15_win_x64_avx2\stockfish_15_x64_avx2.exe")
+
 # Create your views here.
 
 def boardStates(request):
-    text = request.GET.get('message')
-    print()
-    print(text)
-    print()
-    return render(request, 'board.html')
+    message = "Sent back Python response"
+    return JsonResponse({"response": message,
+    "fish": "hiii",
+    "tryMe": "tryme"}, status = 200)
+
+def validMove(request):
+    text = request.POST.get('message')
+    message = "Sent back Python response"
+    return JsonResponse({"response": message,
+    "fish": "hiii",
+    "tryMe": "tryme"}, status = 200)
     
 def load_board(request):
     return render(request, 'board.html')

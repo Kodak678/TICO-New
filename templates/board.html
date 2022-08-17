@@ -211,6 +211,7 @@
       <button rank="8" file="8" player="" piece =""class="white" onClick = "action(event)" id="h1"></button>
   
     </div>
+    {% csrf_token %}
     <script src="{% static 'AJAX.js' %}"></script>
     <script src="{% static 'classesAndInstances.js' %}"></script>
     <script src="{% static 'startBoard.js' %}"></script>
