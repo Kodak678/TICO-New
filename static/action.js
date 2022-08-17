@@ -2,16 +2,30 @@
 function action(event){
     const promotionPlaces = ["a8","b8","c8","d8","e8","f8","g8","h8","a1","b1","c1","d1","e1","f1","g1","h1"];
     const enPassantPositions = ["a6","b6","c6","d6","e6","f6","g6","h6","a3","b3","c3","d3","e3","f3","g3","h3"];
-
+    let csrf = $('input[name=csrfmiddlewaretoken]').val();
     $.ajax({
       url: '/boardStates',
       type: 'get',
       data: {
-          message : "hi My name numar"
+          message : "hi My name numar",
+          csrfmiddlewaretoken: csrf
       },
       success: function(response) {
       
-          console.log("hii")
+          console.log(response.response)
+          console.log(response.fish)
+          console.log(response.tryMe)
+      }
+  });
+    $.ajax({
+      url: '/validMove',
+      type: 'get',
+      data: {
+          moved : "moved"
+      },
+      success: function(response) {
+      
+         
       }
   });
 
