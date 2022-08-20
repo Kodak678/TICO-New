@@ -134,7 +134,13 @@
         <option value="r">Rook</option>
         <option value="b">Bishop</option>
         <option value="n">Knight</option>
+      
       </select>
+      <button id = "legalEnPassant"></button>
+      <button id = "whiteKingSide"></button>
+      <button id = "whiteQueenSide"></button>
+      <button id = "blackQueenSide"></button>
+      <button id = "blackKingSide"></button>
     </div>
     <div class="chessboard">
       <!-- 1st -->
@@ -214,12 +220,19 @@
     {% csrf_token %}
     <script>
 
-    
+let legalEnPassant = false
+let whiteKingSide = false
+let whiteQueenSide = false
+let blackQueenSide = false 
+let blackKingSide = false   
+
+
 function getStates(){
   let csrf = $('input[name=csrfmiddlewaretoken]').val();  
   return $.ajax({
     url: '/boardStates',
     type: 'get',
+    async: false,
     data: {
         message : "hi My name numar",
         csrfmiddlewaretoken: csrf
@@ -230,6 +243,7 @@ function validMove(moveMade){
   return $.ajax({
     url: '/validMove',
     type: 'post',
+    async: false,
     data: {
         move : moveMade,
         csrfmiddlewaretoken: csrf
@@ -237,37 +251,36 @@ function validMove(moveMade){
 }
 
 
-let legalEnPassant =  false
-let whiteKingSide = false
-let whiteQueenSide = false
-let blackQueenSide = false
-let blackKingSide = false
+
 function action(event){
   const promotionPlaces = ["a8","b8","c8","d8","e8","f8","g8","h8","a1","b1","c1","d1","e1","f1","g1","h1"];
   const enPassantPositions = ["a6","b6","c6","d6","e6","f6","g6","h6","a3","b3","c3","d3","e3","f3","g3","h3"];
   let csrf = $('input[name=csrfmiddlewaretoken]').val();
+  
+
+
+
   $.when(getStates()).then(function successHandler(response){
     
-       legalEnPassant =  response.legalEnPassant
-       whiteKingSide = response.whiteKingSide
-       whiteQueenSide = response.whiteQueenSide
-       blackQueenSide = response.blackQueenSide
-       blackKingSide = response.blackKingSide
-    },
-    function errorHandler(){
-      console.log("Error has occurred")
-    })
-  $.when(validMove("e2e4")).then(function successHandler(response){
-         
-     console.log(response.valid)
-    },
-    function errorHandler(){
-      console.log("Error has occurred")
-    })
-
-
-
-
+    legalEnPassant = response.legalEnPassant
+    whiteKingSide = response.whiteKingSide
+    whiteQueenSide = response.whiteQueenSide
+    blackQueenSide = response.blackQueenSide
+    blackKingSide = response.blackKingSide
+    
+ },
+ function errorHandler(){
+   console.log("Error has occurred")
+ })
+ $.when(validMove("e2e4")).then(function successHandler(response){
+   
+   console.log(response.valid)
+  },
+  function errorHandler(){
+    console.log("Error has occurred")
+  })
+  
+ 
 //   $.ajax({
 //     url: '/validMove',
 //     type: 'get',
@@ -297,20 +310,7 @@ function action(event){
           document.getElementById("promotionOptions").setAttribute("class", "showPromotionSelection")
 
         }
-     else if (document.getElementById(currentSquare).getAttribute("piece") == "pawn" && document.getElementById(targetSquare).getAttribute("piece") == "" && enPassantPositions.includes(move.slice(2,4)) && legalEnPassant){
-       if (document.getElementById(currentSquare).getAttribute("player") == "white"){
-           document.getElementById(move.slice(2,3) + String(Number(move.slice(3))-1)).innerHTML = ""
-           document.getElementById(move.slice(2,3) + String(Number(move.slice(3))-1)).setAttribute("piece","")
-           document.getElementById(move.slice(2,3) + String(Number(move.slice(3))-1)).setAttribute("player","")
-          }
-       else if (document.getElementById(currentSquare).getAttribute("player") == "black"){
-           document.getElementById(move.slice(2,3) + String(Number(move.slice(3))+1)).innerHTML = ""
-           document.getElementById(move.slice(2,3) + String(Number(move.slice(3))+1)).setAttribute("piece","")
-           document.getElementById(move.slice(2,3) + String(Number(move.slice(3))+1)).setAttribute("player","")
-          }
-       moveOnScreen(currentSquare,targetSquare)
-       resetAll()   
-     }
+
   
 
      else if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "white" && targetSquare == "g1" && whiteKingSide){

@@ -27,5 +27,6 @@ urlpatterns = [
     path('templates/mainpage.html',views.home),
     path('templates/authenticate',views.authenticate),
     path('boardStates', views.boardStates),
+    path('validMove', views.validMove),
     path('',views.home)
 ]

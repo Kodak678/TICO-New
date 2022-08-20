@@ -1,5 +1,4 @@
-from email import message
-from turtle import rt
+
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 import chess
@@ -36,11 +35,6 @@ def boardStates(request):
     whiteQueenSide = bool(chess.BB_A1)
     blackQueenSide = bool(chess.BB_A8)
     blackKingSide = bool(chess.BB_H8)
-    print(legalEnPassant)
-    print(whiteKingSide)
-    print(whiteQueenSide)
-    print(blackQueenSide)
-    print(blackKingSide)
     return JsonResponse({"legalEnPassant": legalEnPassant,
     "whiteKingSide": whiteKingSide,
     "whiteQueenSide": whiteQueenSide,
@@ -49,9 +43,12 @@ def boardStates(request):
      },status = 200)
 
 def validMove(request):
-    move = request.POST.get('moveMade')
+    move = str(request.POST.get('move'))
+    print(move)
+    m = isValid(move)
+    print(m)
     return JsonResponse({
-    "valid": isValid(move)}, status = 200)
+    "valid": m }, status = 200)
     
 def load_board(request):
     return render(request, 'board.html')
