@@ -4,11 +4,5 @@ function resetAll(){
     currentSquare = ""
     targetSquare = ""
     move = ""
-    if (playerTurn == "white"){
-        playerTurn = "black"
-        }
-        else{
-            playerTurn = "white"
-        }
-    document.getElementById("playerTurn").innerHTML = playerTurn
+
 }

@@ -5,6 +5,15 @@ selector.addEventListener("change", () => {
     let pieces = document.getElementById("promotionOptions")
     let piece = pieces.options[pieces.selectedIndex].value
     move =  move + piece
+    $.when(validMove(move)).then(function successHandler(response){
+   
+      moveValid = response.valid
+     },
+     function errorHandler(){
+       console.log("Error has occurred")
+     })
+
+    if (validMove==true) {
     
     document.getElementById("move").innerHTML = move
     color = document.getElementById(currentSquare).getAttribute("player")
@@ -57,7 +66,10 @@ selector.addEventListener("change", () => {
     document.getElementById("promotionTitle").setAttribute("class", "hidePromotionTitle")
     document.getElementById("promotionOptions").setAttribute("class", "hidePromotionSelection")
     resetAll()
-})
+}else{
+  resetAll()
+}}
+)
 
 
 

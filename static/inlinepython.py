@@ -167,24 +167,55 @@
 # reset_game()
 
 
-import chess
-import chess.engine
 
 
-board = chess.Board()
 
-board.has_legal_en_passant()
-bool(chess.BB_H1)
-bool(chess.BB_A1)
-bool(chess.BB_A8)
-bool(chess.BB_H8)
-board.is_checkmate()
-# Create your views here.
-def isValid(move):
-    try:
-        board.push_san(move)
-        return True
-    except ValueError:
-        return False
 
-print(isValid("e2e7"))
+
+
+
+
+
+  
+
+# if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "white" && targetSquare == "g1" && whiteKingSide){
+# moveOnScreen("h1","f1")
+# moveOnScreen(currentSquare,targetSquare)
+# document.getElementById("move").innerHTML = move
+# resetAll()
+# }
+# else if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "white" && targetSquare == "c1" && whiteQueenSide){
+# moveOnScreen("a1","d1")
+# moveOnScreen(currentSquare,targetSquare)
+# document.getElementById("move").innerHTML = move
+# resetAll()
+# }
+
+# else if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "black" && targetSquare == "c8" && blackQueenSide){
+#  moveOnScreen("a8","d8")
+#  moveOnScreen(currentSquare,targetSquare)
+#  document.getElementById("move").innerHTML = move
+#  resetAll()
+# }
+
+# else if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "black" && targetSquare == "g8" && blackKingSide){
+#  moveOnScreen("h8","f8")
+#  moveOnScreen(currentSquare,targetSquare)
+#  document.getElementById("move").innerHTML = move
+#  resetAll()
+# }
+
+
+# else{
+#   document.getElementById("move").innerHTML = move
+#   moveOnScreen(currentSquare,targetSquare)
+#   resetAll()
+# }
+# if (playerTurn == "white"){
+#   playerTurn = "black"
+#   }
+#   else{
+#       playerTurn = "white"
+#   }
+# document.getElementById("playerTurn").innerHTML = playerTurn
+#       }

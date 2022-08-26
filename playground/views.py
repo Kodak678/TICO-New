@@ -13,12 +13,7 @@ board = chess.Board()
 stockfish = Stockfish(path="static\stockfish_15_win_x64_avx2\stockfish_15_x64_avx2.exe")
 engine = chess.engine.SimpleEngine.popen_uci(r"static\stockfish_15_win_x64_avx2\stockfish_15_x64_avx2.exe")
 
-board.has_legal_en_passant()
-bool(chess.BB_H1)
-bool(chess.BB_A1)
-bool(chess.BB_A8)
-bool(chess.BB_H8)
-board.is_checkmate()
+
 # Create your views here.
 def isValid(move):
     try:
@@ -29,7 +24,7 @@ def isValid(move):
 
 
 def boardStates(request):
-    request.GET.get(message)
+    temp = request.GET.get('hide')
     legalEnPassant =  board.has_legal_en_passant()
     whiteKingSide = bool(chess.BB_H1)
     whiteQueenSide = bool(chess.BB_A1)
