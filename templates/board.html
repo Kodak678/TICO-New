@@ -12,7 +12,7 @@
       width: 640px;
       height: 640px;
       margin: 20px;
-      border: 25px solid #333;
+      border: 25px solid 333;
     }
     .hidePromotionDiv {
       position: absolute;
@@ -62,7 +62,7 @@
       left: 60%;
 
     }
-    #playerTurn{
+    playerTurn{
       width: 200px;
       height: 80px;
       background-color: rgb(255, 255, 255);
@@ -313,7 +313,7 @@ function action(event){
   document.getElementById("promotionDiv").setAttribute("class", "showPromotionDiv")
   document.getElementById("promotionTitle").setAttribute("class", "showPromotionTitle")
   document.getElementById("promotionOptions").setAttribute("class", "showPromotionSelection")
-
+  
 }
 
 $.when(validMove(move)).then(function successHandler(response){
@@ -326,10 +326,24 @@ $.when(validMove(move)).then(function successHandler(response){
 
 
 if (moveValid == true){
-  console.log(move)
-  console.log(moveValid)
+  if (document.getElementById(currentSquare).getAttribute("piece") == "pawn" && document.getElementById(targetSquare).getAttribute("piece") == "" && enPassantPositions.includes(move.slice(2,4)) && legalEnPassant){
+             if (document.getElementById(currentSquare).getAttribute("player") == "white"){
+                 document.getElementById(move.slice(2,3) + String(Number(move.slice(3,4))-1)).innerHTML = ""
+                 document.getElementById(move.slice(2,3) + String(Number(move.slice(3,4))-1)).setAttribute("piece","")
+                 document.getElementById(move.slice(2,3) + String(Number(move.slice(3,4))-1)).setAttribute("player","")
+             }
+             else if (document.getElementById(currentSquare).getAttribute("player") == "black"){
+                 document.getElementById(move.slice(2,3) + String(Number(move.slice(3,4))+1)) = ""
+                 document.getElementById(move.slice(2,3) + String(Number(move.slice(3,4))+1)).setAttribute("piece","")
+                 document.getElementById(move.slice(2,3) + String(Number(move.slice(3,4))+1)).setAttribute("player","")
+                } 
+        moveOnScreen(currentSquare,targetSquare)
+        resetAll()
+  }  
+else {
+  moveOnScreen(currentSquare,targetSquare)
   resetAll()
-
+}
 }
 else{
   console.log("In valid move")
