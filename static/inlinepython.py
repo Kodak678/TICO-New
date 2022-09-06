@@ -173,37 +173,9 @@
 
 
 
+Java code starts here:
 
 
-
-  
-
-# if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "white" && targetSquare == "g1" && whiteKingSide){
-# moveOnScreen("h1","f1")
-# moveOnScreen(currentSquare,targetSquare)
-# document.getElementById("move").innerHTML = move
-# resetAll()
-# }
-# else if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "white" && targetSquare == "c1" && whiteQueenSide){
-# moveOnScreen("a1","d1")
-# moveOnScreen(currentSquare,targetSquare)
-# document.getElementById("move").innerHTML = move
-# resetAll()
-# }
-
-# else if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "black" && targetSquare == "c8" && blackQueenSide){
-#  moveOnScreen("a8","d8")
-#  moveOnScreen(currentSquare,targetSquare)
-#  document.getElementById("move").innerHTML = move
-#  resetAll()
-# }
-
-# else if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "black" && targetSquare == "g8" && blackKingSide){
-#  moveOnScreen("h8","f8")
-#  moveOnScreen(currentSquare,targetSquare)
-#  document.getElementById("move").innerHTML = move
-#  resetAll()
-# }
 
 
 # else{
@@ -211,11 +183,3 @@
 #   moveOnScreen(currentSquare,targetSquare)
 #   resetAll()
 # }
-# if (playerTurn == "white"){
-#   playerTurn = "black"
-#   }
-#   else{
-#       playerTurn = "white"
-#   }
-# document.getElementById("playerTurn").innerHTML = playerTurn
-#       }

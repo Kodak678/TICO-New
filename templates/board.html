@@ -12,7 +12,7 @@
       width: 640px;
       height: 640px;
       margin: 20px;
-      border: 25px solid 333;
+      border: 25px solid rgb(0,0,0);
     }
     .hidePromotionDiv {
       position: absolute;
@@ -62,7 +62,7 @@
       left: 60%;
 
     }
-    playerTurn{
+    .playerTurn{
       width: 200px;
       height: 80px;
       background-color: rgb(255, 255, 255);
@@ -80,7 +80,7 @@
       left: 60%;
       margin: 5%;
     }
-    .beige {
+    .biege {
       width: 170px;
       height: 80px;
       background-color: rgb(255, 255, 255);
@@ -120,11 +120,11 @@
     
     <div class = "optionsDiv" id="optionsDiv">
       <p class = "p">Current Player's Turn:</p>
-      <button id = "playerTurn"></button>
+      <button id = "playerTurn" class = "playerTurn"></button>
       <p class = "p">Currently sellected piece:</p>
       <button class = "green" id = "current"></button>
       <p class = "p">Last legal move:</p>
-      <button class = "beige" id = "move"></button>
+      <button class = "biege" id = "move"></button>
     </div>
     <div id = "promotionDiv" class = "hidePromotionDiv">
       <h4 class="hidePromotionTitle" id = "promotionTitle">Choose what piece to promote to:</h4>
@@ -229,7 +229,7 @@ function getStates(){
     type: 'get',
     async: false,
     data: {
-        hide : "hi My name numar",
+        hide : "getting Boardstates",
     }});
 }
 
@@ -275,20 +275,6 @@ function action(event){
  })
 
 
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
   if (currentSquare == ""){
   currentSquare = String(event.target.id);
   document.getElementById("current").innerHTML = currentSquare
@@ -303,19 +289,6 @@ function action(event){
     move = currentSquare + targetSquare
 
 
-  
-
-     
-    
-    
-      
- if (promotionPlaces.includes(move.slice(2,4)) && document.getElementById(currentSquare).getAttribute("piece") == "pawn"){
-  document.getElementById("promotionDiv").setAttribute("class", "showPromotionDiv")
-  document.getElementById("promotionTitle").setAttribute("class", "showPromotionTitle")
-  document.getElementById("promotionOptions").setAttribute("class", "showPromotionSelection")
-  
-}
-
 $.when(validMove(move)).then(function successHandler(response){
    
   moveValid = response.valid
@@ -326,31 +299,73 @@ $.when(validMove(move)).then(function successHandler(response){
 
 
 if (moveValid == true){
+  document.getElementById("move").innerHTML = move
   if (document.getElementById(currentSquare).getAttribute("piece") == "pawn" && document.getElementById(targetSquare).getAttribute("piece") == "" && enPassantPositions.includes(move.slice(2,4)) && legalEnPassant){
              if (document.getElementById(currentSquare).getAttribute("player") == "white"){
-                 document.getElementById(move.slice(2,3) + String(Number(move.slice(3,4))-1)).innerHTML = ""
-                 document.getElementById(move.slice(2,3) + String(Number(move.slice(3,4))-1)).setAttribute("piece","")
-                 document.getElementById(move.slice(2,3) + String(Number(move.slice(3,4))-1)).setAttribute("player","")
+                 document.getElementById(move.slice(2,3) + String((Number(move.slice(3,4))-1))).innerHTML = ""
+                 document.getElementById(move.slice(2,3) + String((Number(move.slice(3,4))-1))).setAttribute("piece","")
+                 document.getElementById(move.slice(2,3) + String((Number(move.slice(3,4))-1))).setAttribute("player","")
              }
              else if (document.getElementById(currentSquare).getAttribute("player") == "black"){
-                 document.getElementById(move.slice(2,3) + String(Number(move.slice(3,4))+1)) = ""
-                 document.getElementById(move.slice(2,3) + String(Number(move.slice(3,4))+1)).setAttribute("piece","")
-                 document.getElementById(move.slice(2,3) + String(Number(move.slice(3,4))+1)).setAttribute("player","")
-                } 
-        moveOnScreen(currentSquare,targetSquare)
-        resetAll()
-  }  
-else {
+                 document.getElementById(move.slice(2,3) + String((Number(move.slice(3,4))+1))).innerHTML = ""
+                 document.getElementById(move.slice(2,3) + String((Number(move.slice(3,4))+1))).setAttribute("piece","")
+                 document.getElementById(move.slice(2,3) + String((Number(move.slice(3,4))+1))).setAttribute("player","")
+                }
+                 
+  }
+  
+  
+
+  else if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "white" && targetSquare == "g1" && whiteKingSide){
+  moveOnScreen("h1","f1")
   moveOnScreen(currentSquare,targetSquare)
+  document.getElementById("move").innerHTML = move
+  resetAll()
+  }
+  else if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "white" && targetSquare == "c1" && whiteQueenSide){
+  moveOnScreen("a1","d1")
+  moveOnScreen(currentSquare,targetSquare)
+  document.getElementById("move").innerHTML = move
+  resetAll()
+  }
+
+  else if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "black" && targetSquare == "c8" && blackQueenSide){
+  moveOnScreen("a8","d8")
+  moveOnScreen(currentSquare,targetSquare)
+  document.getElementById("move").innerHTML = move
+  resetAll()
+  }
+
+  else if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "black" && targetSquare == "g8" && blackKingSide){
+  moveOnScreen("h8","f8")
+  moveOnScreen(currentSquare,targetSquare)
+  document.getElementById("move").innerHTML = move
+  resetAll()
+}  
+  moveOnScreen(currentSquare,targetSquare)
+  if (playerTurn == "white"){
+  playerTurn = "black"
+  }
+  else{
+      playerTurn = "white"
+  }
+  document.getElementById("playerTurn").innerHTML = playerTurn
   resetAll()
 }
+else  if (promotionPlaces.includes(move.slice(2,4)) && document.getElementById(currentSquare).getAttribute("piece") == "pawn"){
+  document.getElementById("promotionDiv").setAttribute("class", "showPromotionDiv")
+  document.getElementById("promotionTitle").setAttribute("class", "showPromotionTitle")
+  document.getElementById("promotionOptions").setAttribute("class", "showPromotionSelection")
+  
 }
+
 else{
   console.log("In valid move")
   resetAll()
 }
 }
 }
+
     </script>
     <script src="{% static 'AJAX.js' %}"></script>
     <script src="{% static 'classesAndInstances.js' %}"></script>

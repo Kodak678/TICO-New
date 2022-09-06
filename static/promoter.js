@@ -12,9 +12,7 @@ selector.addEventListener("change", () => {
      function errorHandler(){
        console.log("Error has occurred")
      })
-
-    if (validMove==true) {
-    
+    if (moveValid==true) {
     document.getElementById("move").innerHTML = move
     color = document.getElementById(currentSquare).getAttribute("player")
     if (color == "white"){
@@ -65,9 +63,20 @@ selector.addEventListener("change", () => {
     document.getElementById("promotionDiv").setAttribute("class", "hideromotionDiv")
     document.getElementById("promotionTitle").setAttribute("class", "hidePromotionTitle")
     document.getElementById("promotionOptions").setAttribute("class", "hidePromotionSelection")
+    if (playerTurn == "white"){
+      playerTurn = "black"
+      }
+      else{
+          playerTurn = "white"
+      }
+    document.getElementById("playerTurn").innerHTML = playerTurn
+          
     resetAll()
 }else{
   resetAll()
+  document.getElementById("promotionDiv").setAttribute("class", "hideromotionDiv")
+  document.getElementById("promotionTitle").setAttribute("class", "hidePromotionTitle")
+  document.getElementById("promotionOptions").setAttribute("class", "hidePromotionSelection")
 }}
 )
 

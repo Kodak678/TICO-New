@@ -17,16 +17,19 @@ from django.contrib import admin
 from django.urls import path, include
 
 
-from playground import views
+from playground import views as playground
+from users import views as users
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('templates/board.html', views.load_board),
-    path('templates/login.html', views.login),
-    path('templates/register.html', views.register),
-    path('templates/mainpage.html',views.home),
-    path('templates/authenticate',views.authenticate),
-    path('boardStates', views.boardStates),
-    path('validMove', views.validMove),
-    path('',views.home)
+    path('templates/board.html', playground.load_board),
+    path('templates/login.html', users.login),
+    path('templates/register.html', users.register),
+    path('templates/mainpage.html',playground.home),
+    path('templates/authenticate',users.authenticate),
+    path('boardStates', playground.boardStates),
+    path('validMove', playground.validMove),
+    path('templates/addUser',users.addUser),
+    path('',playground.home)
 ]

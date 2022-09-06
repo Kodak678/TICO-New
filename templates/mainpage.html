@@ -19,9 +19,20 @@
       font-size: 100px;
       text-align: center;
     }
+    .messages {
+      cursor: pointer;
+      float: left;
+      width: 100%;
+      height: 160px;
+      background-color: rgb(255, 255, 255);
+      font-size: 50px;
+      text-align: center;
+      display: table-cell;
+      vertical-align: middle;
+    }
   </style>
   <body>
-    <h1>{{Username}} {{Password}}</h1>
+    <h1>{{Username}}</h1>
     <a type="a" href="/templates/board.html">Play!</a
     ><a type="a" href="/templates/login.html">Login!</a
     ><a type="a" href="/templates/register.html">Register!</a> ><a
@@ -29,5 +40,14 @@
       onclick="alert('Hello world!')"
       >Leaderboard!</a
     >
+    <div class="messages">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
   </body>
 </html>
