@@ -1,0 +1,380 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Board</title>
+  </head>
+  <style>
+    .chessboard {
+      width: 640px;
+      height: 640px;
+      margin: 20px;
+      border: 25px solid rgb(0,0,0);
+    }
+    .hidePromotionDiv {
+      position: absolute;
+      width: 640px;
+      height: 640px;
+      margin: 20px;
+      display: none;
+      background-color:white;
+      border: 25px solid rgb(255, 255, 255);
+    }
+    .showPromotionDiv {
+      position: absolute;
+      width: 640px;
+      height: 640px;
+      margin: 20px;
+      background-color:white;
+      border: 25px solid rgb(255, 255, 255);
+    }
+    .black {
+      cursor: pointer;
+      float: left;
+      width: 80px;
+      height: 80px;
+      background-color: burlywood;
+      font-size: 50px;
+      text-align: center;
+      display: table-cell;
+      vertical-align: middle;
+    }
+    .white {
+      cursor: pointer;
+      float: left;
+      width: 80px;
+      height: 80px;
+      background-color: rgb(255, 255, 255);
+      font-size: 50px;
+      text-align: center;
+      display: table-cell;
+      vertical-align: middle;
+    }
+    .green {
+      width: 80px;
+      height: 80px;
+      background-color: rgb(24, 255, 3);
+      font-size: 40px;
+      text-align: center;
+      left: 60%;
+
+    }
+    .playerTurn{
+      width: 200px;
+      height: 80px;
+      background-color: rgb(255, 255, 255);
+      font-size: 50px;
+      text-align: center;
+      left: 60%;
+    }
+    .promotionButton{
+      cursor: pointer;
+      width: 200px;
+      height: 80px;
+      background-color: beige;
+      font-size: 50px;
+      text-align: center;
+      left: 60%;
+      margin: 5%;
+    }
+    .biege {
+      width: 170px;
+      height: 80px;
+      background-color: rgb(255, 255, 255);
+      font-size: 50px;
+      text-align: center;
+      left: 70%;
+    }
+    .optionsDiv{
+      position: fixed;
+      width: 220px;
+      height: 200px;
+      background-color: rgb(255, 255, 255);
+      font-size: 50px;
+      text-align: center;
+      left: 60%;
+      top: 15%;
+    }
+    .p{
+      font-size: 20px;
+    }
+    .hidePromotionTitle{
+      display: none;
+    }
+    .showPromotionTitle{
+      display: block;
+    }
+    .hidePromotionSelection{
+      display: none;
+    }
+    .showPromotionSelection{
+      display: block;
+    }
+  </style>
+
+
+  <body>
+    
+    <div class = "optionsDiv" id="optionsDiv">
+      <p class = "p">Current Player's Turn:</p>
+      <button id = "playerTurn" class = "playerTurn"></button>
+      <p class = "p">Currently sellected piece:</p>
+      <button class = "green" id = "current"></button>
+      <p class = "p">Last legal move:</p>
+      <button class = "biege" id = "move"></button>
+    </div>
+    <div id = "promotionDiv" class = "hidePromotionDiv">
+      <h4 class="hidePromotionTitle" id = "promotionTitle">Choose what piece to promote to:</h4>
+      <select name="promotionPieces" id="promotionOptions" class = "hidePromotionSelection">
+        <option selected value="none"></option>
+        <option value="q">Queen</option>
+        <option value="r">Rook</option>
+        <option value="b">Bishop</option>
+        <option value="n">Knight</option>   
+      </select>
+    </div>
+    <div class="chessboard">
+      <!-- 1st -->
+      <button rank="1" file="1" player="" piece ="" class="white" onClick = "action(event)" id="a8"></button>
+      <button rank="1" file="2" player="" piece ="" class="black" onClick = "action(event)" id="b8"></button>
+      <button rank="1" file="3" player="" piece ="" class="white" onClick = "action(event)" id="c8"></button>
+      <button rank="1" file="4" player="" piece ="" class="black" onClick = "action(event)" id="d8"></button>
+      <button rank="1" file="5" player="" piece ="" class="white" onClick = "action(event)" id="e8"></button>
+      <button rank="1" file="6" player="" piece =""class="black" onClick = "action(event)" id="f8"></button>
+      <button rank="1" file="7" player="" piece =""class="white" onClick = "action(event)" id="g8"></button>
+      <button rank="1" file="8" player="" piece =""class="black" onClick = "action(event)" id="h8"></button>
+      <!-- 2nd -->
+      <button rank="2" file="1" player="" piece ="" class="black" onClick = "action(event)" id="a7"></button>
+      <button rank="2" file="2" player="" piece =""class="white" onClick = "action(event)" id="b7"></button>
+      <button rank="2" file="3" player="" piece =""class="black" onClick = "action(event)" id="c7"></button>
+      <button rank="2" file="4" player="" piece =""class="white" onClick = "action(event)" id="d7"></button>
+      <button rank="2" file="5" player="" piece =""class="black" onClick = "action(event)" id="e7"></button>
+      <button rank="2" file="6" player="" piece =""class="white" onClick = "action(event)" id="f7"></button>
+      <button rank="2" file="7" player="" piece =""class="black" onClick = "action(event)" id="g7"></button>
+      <button rank="2" file="8" player="" piece =""class="white" onClick = "action(event)" id="h7"></button>
+      <!-- 3th -->
+      <button rank="3" file="1" player="" piece =""class="white" onClick = "action(event)" id="a6"></button>
+      <button rank="3" file="2" player="" piece =""class="black" onClick = "action(event)" id="b6"></button>
+      <button rank="3" file="3" player="" piece =""class="white" onClick = "action(event)" id="c6"></button>
+      <button rank="3" file="4" player="" piece =""class="black" onClick = "action(event)" id="d6"></button>
+      <button rank="3" file="5" player="" piece =""class="white" onClick = "action(event)" id="e6"></button>
+      <button rank="3" file="6" player="" piece =""class="black" onClick = "action(event)" id="f6"></button>
+      <button rank="3" file="7" player="" piece =""class="white" onClick = "action(event)" id="g6"></button>
+      <button rank="3" file="8" player="" piece =""class="black" onClick = "action(event)" id="h6"></button>
+      <!-- 4st -->
+      <button rank="4" file="1" player="" piece ="" class="black" onClick = "action(event)" id="a5"></button>
+      <button rank="4" file="2" player="" piece ="" class="white" onClick = "action(event)" id="b5"></button>
+      <button rank="4" file="3" player="" piece =""class="black" onClick = "action(event)" id="c5"></button>
+      <button rank="4" file="4" player="" piece =""class="white" onClick = "action(event)" id="d5"></button>
+      <button rank="4" file="5" player="" piece =""class="black" onClick = "action(event)" id="e5"></button>
+      <button rank="4" file="6" player="" piece =""class="white" onClick = "action(event)" id="f5"></button>
+      <button rank="4" file="7" player="" piece =""class="black" onClick = "action(event)" id="g5"></button>
+      <button rank="4" file="8" player="" piece =""class="white" onClick = "action(event)" id="h5"></button>
+      <!-- 5th -->
+      <button rank="5" file="1" player="" piece ="" class="white" onClick = "action(event)" id="a4"></button>
+      <button rank="5" file="2" player="" piece =""class="black" onClick = "action(event)" id="b4"></button>
+      <button rank="5" file="3" player="" piece =""class="white" onClick = "action(event)" id="c4"></button>
+      <button rank="5" file="4" player="" piece =""class="black" onClick = "action(event)" id="d4"></button>
+      <button rank="5" file="5" player="" piece =""class="white" onClick = "action(event)" id="e4"></button>
+      <button rank="5" file="6" player="" piece =""class="black" onClick = "action(event)" id="f4"></button>
+      <button rank="5" file="7" player="" piece =""class="white" onClick = "action(event)" id="g4"></button>
+      <button rank="5" file="8" player="" piece =""class="black" onClick = "action(event)" id="h4"></button>
+      <!-- 6th -->
+      <button rank="6" file="1" player="" piece =""class="black" onClick = "action(event)" id="a3"></button>
+      <button rank="6" file="2" player=""piece ="" class="white" onClick = "action(event)" id="b3"></button>
+      <button rank="6" file="3" player="" piece =""class="black" onClick = "action(event)" id="c3"></button>
+      <button rank="6" file="4" player=""piece ="" class="white" onClick = "action(event)" id="d3"></button>
+      <button rank="6" file="5" player="" piece =""class="black" onClick = "action(event)" id="e3"></button>
+      <button rank="6" file="6" player="" piece =""class="white" onClick = "action(event)" id="f3"></button>
+      <button rank="6" file="7" player="" piece =""class="black" onClick = "action(event)" id="g3"></button>
+      <button rank="6" file="8" player="" piece =""class="white" onClick = "action(event)" id="h3"></button>
+      <!-- 7th -->
+      <button rank="7" file="1" player="" piece =""class="white" onClick = "action(event)" id="a2"></button>
+      <button rank="7" file="2" player="" piece =""class="black" onClick = "action(event)" id="b2"></button>
+      <button rank="7" file="3" player="" piece =""class="white" onClick = "action(event)" id="c2"></button>
+      <button rank="7" file="4" player="" piece =""class="black" onClick = "action(event)" id="d2"></button>
+      <button rank="7" file="5" player="" piece =""class="white" onClick = "action(event)" id="e2"></button>
+      <button rank="7" file="6" player="" piece =""class="black" onClick = "action(event)" id="f2"></button>
+      <button rank="7" file="7" player="" piece =""class="white" onClick = "action(event)" id="g2"></button>
+      <button rank="7" file="8" player="" piece =""class="black" onClick = "action(event)" id="h2"></button>
+      <!-- 8th -->
+      <button rank="8" file="1" player="" piece =""class="black" onClick = "action(event)" id="a1"></button>
+      <button rank="8" file="2" player="" piece =""class="white" onClick = "action(event)" id="b1"></button>
+      <button rank="8" file="3" player="" piece =""class="black" onClick = "action(event)" id="c1"></button>
+      <button rank="8" file="4" player="" piece =""class="white" onClick = "action(event)" id="d1"></button>
+      <button rank="8" file="5" player="" piece =""class="black" onClick = "action(event)" id="e1"></button>
+      <button rank="8" file="6" player="" piece =""class="white" onClick = "action(event)" id="f1"></button>
+      <button rank="8" file="7" player="" piece =""class="black" onClick = "action(event)" id="g1"></button>
+      <button rank="8" file="8" player="" piece =""class="white" onClick = "action(event)" id="h1"></button>
+  
+    </div>
+    {% csrf_token %}
+    <script>
+
+let legalEnPassant = false
+let whiteKingSide = false
+let whiteQueenSide = false
+let blackQueenSide = false 
+let blackKingSide = false   
+let moveValid = false
+
+
+
+function getStates(){
+  return $.ajax({
+    url: '/boardStates',
+    type: 'get',
+    async: false,
+    data: {
+        hide : "getting Boardstates",
+    }});
+}
+
+
+function validMove(moveMade){
+  let csrf = $('input[name=csrfmiddlewaretoken]').val();  
+  return $.ajax({
+    url: '/validMove',
+    type: 'post',
+    async: false,
+    data: {
+        move : moveMade,
+        csrfmiddlewaretoken: csrf
+    }});
+}
+
+
+
+
+function action(event){
+  const promotionPlaces = ["a8","b8","c8","d8","e8","f8","g8","h8","a1","b1","c1","d1","e1","f1","g1","h1"];
+  const enPassantPositions = ["a6","b6","c6","d6","e6","f6","g6","h6","a3","b3","c3","d3","e3","f3","g3","h3"];
+  let csrf = $('input[name=csrfmiddlewaretoken]').val();
+  
+
+  
+
+
+
+
+
+
+
+
+  if (currentSquare == ""){
+  currentSquare = String(event.target.id);
+  document.getElementById("current").innerHTML = currentSquare
+  
+  }
+  else{
+    
+    
+    
+    targetSquare = String(event.target.id);
+    
+    move = currentSquare + targetSquare
+    
+$.when(getStates()).then(function successHandler(response){
+    
+    legalEnPassant = response.legalEnPassant
+    whiteKingSide = response.whiteKingSide
+    whiteQueenSide = response.whiteQueenSide
+    blackQueenSide = response.blackQueenSide
+    blackKingSide = response.blackKingSide
+    
+ },
+ function errorHandler(){
+   console.log("Error has occurred")
+ })
+
+$.when(validMove(move)).then(function successHandler(response){
+   
+  moveValid = response.valid
+ },
+ function errorHandler(){
+   console.log("Error has occurred")
+ })
+
+
+if (moveValid == true){
+  document.getElementById("move").innerHTML = move
+  if (document.getElementById(currentSquare).getAttribute("piece") == "pawn" && document.getElementById(targetSquare).getAttribute("piece") == "" && enPassantPositions.includes(move.slice(2,4)) && legalEnPassant){
+             if (document.getElementById(currentSquare).getAttribute("player") == "white"){
+                 document.getElementById(move.slice(2,3) + String((Number(move.slice(3,4))-1))).innerHTML = ""
+                 document.getElementById(move.slice(2,3) + String((Number(move.slice(3,4))-1))).setAttribute("piece","")
+                 document.getElementById(move.slice(2,3) + String((Number(move.slice(3,4))-1))).setAttribute("player","")
+             }
+             else if (document.getElementById(currentSquare).getAttribute("player") == "black"){
+                 document.getElementById(move.slice(2,3) + String((Number(move.slice(3,4))+1))).innerHTML = ""
+                 document.getElementById(move.slice(2,3) + String((Number(move.slice(3,4))+1))).setAttribute("piece","")
+                 document.getElementById(move.slice(2,3) + String((Number(move.slice(3,4))+1))).setAttribute("player","")
+                }
+                 
+  }
+  
+  
+
+  else if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "white" && targetSquare == "g1" && whiteKingSide){
+  moveOnScreen("h1","f1")
+  moveOnScreen(currentSquare,targetSquare)
+  document.getElementById("move").innerHTML = move
+  resetAll()
+  }
+  else if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "white" && targetSquare == "c1" && whiteQueenSide){
+  moveOnScreen("a1","d1")
+  moveOnScreen(currentSquare,targetSquare)
+  document.getElementById("move").innerHTML = move
+  resetAll()
+  }
+
+  else if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "black" && targetSquare == "c8" && blackQueenSide){
+  moveOnScreen("a8","d8")
+  moveOnScreen(currentSquare,targetSquare)
+  document.getElementById("move").innerHTML = move
+  resetAll()
+  }
+
+  else if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "black" && targetSquare == "g8" && blackKingSide){
+  moveOnScreen("h8","f8")
+  moveOnScreen(currentSquare,targetSquare)
+  document.getElementById("move").innerHTML = move
+  resetAll()
+}  
+  moveOnScreen(currentSquare,targetSquare)
+  if (playerTurn == "white"){
+  playerTurn = "black"
+  }
+  else{
+      playerTurn = "white"
+  }
+  document.getElementById("playerTurn").innerHTML = playerTurn
+  resetAll()
+}
+else  if (promotionPlaces.includes(move.slice(2,4)) && document.getElementById(currentSquare).getAttribute("piece") == "pawn"){
+  document.getElementById("promotionDiv").setAttribute("class", "showPromotionDiv")
+  document.getElementById("promotionTitle").setAttribute("class", "showPromotionTitle")
+  document.getElementById("promotionOptions").setAttribute("class", "showPromotionSelection")
+  
+}
+
+else{
+  console.log("In valid move")
+  resetAll()
+}
+}
+}
+
+    </script>
+    <script src="{% static 'AJAX.js' %}"></script>
+    <script src="{% static 'classesAndInstances.js' %}"></script>
+    <script src="{% static 'startBoard.js' %}"></script>
+    <script src="{% static 'moveOnScreen.js' %}"></script>
+    <script src="{% static 'action.js' %}"></script>
+    <script src="{% static 'promoter.js' %}"></script>
+    <script src="{% static 'resetAllGlobals.js' %}"></script>
+    <script src="{% static 'resetCurrentSquare.js' %}"></script>
+  </body>
+</html>
