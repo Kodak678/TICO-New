@@ -1,6 +1,17 @@
+
 import chess
-import numpy
-board  = chess.Board()
+import chess.engine
+import numpy 
+
+
+
+
+def getScore(board):
+    with chess.engine.SimpleEngine.popen_uci("templates\stockfish.exe") as stockfish: #Calling a powerfull AI to give the approximate score for a given board position
+        info = stockfish.analyse(board, chess.engine.Limit(time=0.1))
+        return info["score"].white().score()
+
+
 
 # moves = []
 # for move in board.legal_moves:
@@ -13,13 +24,7 @@ board  = chess.Board()
 
 
 
-#unravel_index converts an index such as 9 into its corresponding co ordinate for an array of given dimensions.
-#for example: in an 8 by 8 dimensional array: the co ordinates corresponding to the index 9 would be (1,1)
-#The index (1,1) was calculated by doing 1 x 8 + 1 to get 9
 
-board.push_san("e2e4")
-board.push_san("d7d5")
-print(board)
 
 letterToCoordinate = {
   'a': 0,
@@ -39,6 +44,7 @@ def coordinateToIndex(square):
   return 8 - int(letter[1]), letterToCoordinate[letter[0]] #This part takes that name, e.g. 'e4' and convert this position to its coordinate of 4 4 using the letterToCoordinate dictionary to convert the letter
 
 
+
 def ConvertToAIboard(board):
     #This program turns the chess board into something the AI can analyse better
     AIboard = numpy.zeros((14, 8, 8), dtype=numpy.int8)
@@ -48,6 +54,11 @@ def ConvertToAIboard(board):
     rook_number = 4
     queen_number = 5
     king_number = 6
+
+
+    #unravel_index converts an index such as 9 into its corresponding co ordinate for an array of given dimensions.
+    #for example: in an 8 by 8 dimensional array: the co ordinates corresponding to the index 9 would be (1,1)
+    #The index (1,1) was calculated by doing 1 x 8 + 1 to get 9
 
     for index in board.pieces(pawn_number, True):
         position = numpy.unravel_index(index, (8, 8))  #In a board of 64, each coordinate is represented by an index numberered from 0 to 63, in order to convert this index to a coordinate: I have unravelled it
@@ -108,19 +119,25 @@ def ConvertToAIboard(board):
     board.turn = chess.WHITE
     for move in board.generate_legal_captures():
         y , x = coordinateToIndex(move.to_square)
-    AIboard[12][y][x] = 1
+        AIboard[12][y][x] = 1
 
     board.turn = chess.BLACK
     for move in board.generate_legal_captures():
         y , x = coordinateToIndex(move.to_square)
-    AIboard[13][y][x] = 1
+        AIboard[13][y][x] = 1
 
     board.turn = RealTurn
 
     #The above chunk of code turns all the squares that black and white can capture a piece on and converts it into into a square index
     #The chunck of code saves the current player turn in a temporray variable to retore to once its simulated the board from the perspective of both players
-    
+
 
     return(AIboard)
 
+board = chess.Board()
+# def SaveBoard(board):
+Score = getScore(board)
+AIboard = ConvertToAIboard(board)
 
+
+print(AIboard)
