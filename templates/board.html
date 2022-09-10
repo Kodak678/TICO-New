@@ -261,18 +261,7 @@ function action(event){
 
 
 
-  $.when(getStates()).then(function successHandler(response){
-    
-    legalEnPassant = response.legalEnPassant
-    whiteKingSide = response.whiteKingSide
-    whiteQueenSide = response.whiteQueenSide
-    blackQueenSide = response.blackQueenSide
-    blackKingSide = response.blackKingSide
-    
- },
- function errorHandler(){
-   console.log("Error has occurred")
- })
+
 
 
   if (currentSquare == ""){
@@ -287,7 +276,19 @@ function action(event){
     targetSquare = String(event.target.id);
     
     move = currentSquare + targetSquare
-
+    
+$.when(getStates()).then(function successHandler(response){
+    
+    legalEnPassant = response.legalEnPassant
+    whiteKingSide = response.whiteKingSide
+    whiteQueenSide = response.whiteQueenSide
+    blackQueenSide = response.blackQueenSide
+    blackKingSide = response.blackKingSide
+    
+ },
+ function errorHandler(){
+   console.log("Error has occurred")
+ })
 
 $.when(validMove(move)).then(function successHandler(response){
    
