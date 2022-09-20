@@ -1,44 +1,17 @@
 
 import chess
 import chess.engine
+
+import tensorflow as tf
+from tensorflow import keras
+from keras import layers, models
 import numpy 
+
 Boardsnaps = []
 Boardscores = []
 board = chess.Board()
-
-
-
-
-
-def getScore():
-    global board
-    with chess.engine.SimpleEngine.popen_uci("templates\stockfish.exe") as stockfish: #Calling a powerfull AI to give the approximate score for a given board position
-        info = stockfish.analyse(board, chess.engine.Limit(time=0.1))
-        if info["score"].is_mate():
-            if info["score"].white().mate() == 1:
-                return 10000
-            if info["score"].black().mate() == 1:
-                return -10000
-            if board.outcome().winner == True:
-                return 1000000000
-            if board.outcome().winner == False:
-                return -1000000000
-        else:
-            return info["score"].white().score()
-
-
-
-# moves = []
-# for move in board.legal_moves:
-#     moves.append(str(move))
-
-# print(moves)
-
-
-
-
-
-
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' #Tells program to ignore an unimportant warning
 
 
 letterToCoordinate = {
@@ -57,7 +30,6 @@ letterToCoordinate = {
 def coordinateToIndex(square):
   letter = chess.square_name(square) #This function call converts the square index of a square such as 28 to its name; which for '28' would be 'e4'
   return 8 - int(letter[1]), letterToCoordinate[letter[0]] #This part takes that name, e.g. 'e4' and convert this position to its coordinate of 4 4 using the letterToCoordinate dictionary to convert the letter
-
 
 
 def ConvertToAIboard(board):
@@ -149,61 +121,93 @@ def ConvertToAIboard(board):
 
     return(AIboard)
 
+def getScore():
+    global board
+    with chess.engine.SimpleEngine.popen_uci("templates\stockfish.exe") as stockfish: #Calling a well known chess AI to give an estimated board score at a certain position for a given board position
+        info = stockfish.analyse(board, chess.engine.Limit(time=0.1))
+        if info["score"].is_mate():
+            if info["score"].white().mate() == 1:
+                return 1000
+            if info["score"].black().mate() == 1:
+                return -1000
+            if board.outcome().winner == True:
+                return 10000
+            if board.outcome().winner == False:
+                return -10000
+        else:
+            return info["score"].white().score()
 
 
-def CreateSaveFiles():
-    AIboard = numpy.zeros((14, 8, 8), dtype=numpy.int8)
-    Scores = numpy.array([0])
-    numpy.save("Boards.npy",AIboard,True)
-    numpy.save("Scores.npy",Scores,True)
+# #White win
+# board.push_san("e2e4")
+# print(getScore())
 
+# board.push_san("g7g5")
+# print(getScore())
 
-def SaveBoardData():
-    if not board.is_checkmate():
-        AIboard = ConvertToAIboard(board)
-        Score = getScore()
-        Boardsnaps.append(AIboard)
-        Boardscores.append(Score)
-    else:
-        SaveBoard(Boardsnaps,Boardscores)
+# board.push_san("f1c4")
+# print(getScore())
 
+# board.push_san("f7f5")
+# print(getScore())
 
-def SaveBoard(Boardsnaps,Boardscores):
-    Boards = numpy.load("Boards.npy")
-    for snap in Boardsnaps:
-        Boards = numpy.concatenate((Boards,snap))
-    numpy.save("Boards.npy",Boards, True)
-
-    Scores = numpy.load("Scores.npy")
-    Scores = numpy.concatenate((Scores,Boardscores))
-    numpy.save("Scores.npy",Scores, True)
-
-
-
-
-
-CreateSaveFiles()
-
+# board.push_san("d1h5")
+# print(getScore())
 
 
 
-board.push_san("e2e4")
-SaveBoardData()
-board.push_san("g7g5")
-SaveBoardData()
-board.push_san("f1c4")
-SaveBoardData()
-board.push_san("f7f5")
-print(getScore())
-SaveBoardData()
-board.push_san("d1h5")
-print(getScore())
-SaveBoardData()
-
-for i in numpy.load("Boards.npy"):
-    print(i)
-for i in numpy.load("Scores.npy",allow_pickle=True):
-    print(i)
 
 
 
+
+
+#Black win
+# board.push_san("f2f4")
+# print(getScore())
+
+# board.push_san("e7e5")
+# print(getScore())
+
+# board.push_san("g2g4")
+# print(getScore())
+
+# board.push_san("d8h4")
+# print(getScore())
+
+
+
+
+def build_model(conv_size, conv_depth):
+  board3d = layers.Input(shape=(14, 8, 8))
+
+  # adding the convolutional layers
+  x = board3d
+  for _ in range(conv_depth):
+    x = layers.Conv2D(filters=conv_size, kernel_size=3, padding='same', activation='relu', data_format='channels_first')(x)
+  x = layers.Flatten()(x)
+  x = layers.Dense(64, 'relu')(x)
+  x = layers.Dense(1, 'sigmoid')(x)
+
+  return models.Model(inputs=board3d, outputs=x)
+
+
+
+
+board = chess.Board()
+board.push_san("e4")
+AIboard = ConvertToAIboard(board)
+
+x = numpy.load("Boards.npy")
+
+y = numpy.load("Scores.npy")
+y = numpy.asarray(y / abs(y).max() / 2 + 0.5, dtype=numpy.float32) # normalization (0 - 1)
+print(y)
+x = x.reshape(5,14,8,8)
+
+model = tf.keras.models.Sequential([tf.keras.layers.Flatten(input_shape = (14,8,8)), 
+                                    tf.keras.layers.Dense(128, activation=tf.nn.relu), 
+                                    tf.keras.layers.Dense(1, activation=tf.nn.sigmoid)])
+model.compile(optimizer=tf.keras.optimizers.Adam(), loss= 'sparse_categorical_crossentropy')
+model.fit(x,y,epochs=10)
+m = AIboard.reshape(1,14,8,8)
+print(model.predict(x))
