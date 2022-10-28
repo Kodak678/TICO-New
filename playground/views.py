@@ -3,11 +3,9 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 import chess
 import chess.engine
+import random
 
 
-
-from numpy import load
-import numpy as np
 
 
 board = chess.Board()
@@ -49,3 +47,11 @@ def home(request):
     return render(request, 'mainpage.html')
 
 
+def AiMove(request):
+    temp = request.GET.get('stuff')
+    child_nodes = list(board.legal_moves)
+    move = random.choice(child_nodes)
+    board.push(move)
+    move = str(move)
+    return JsonResponse({
+    "move": move }, status = 200)

@@ -1,10 +1,12 @@
 
+
 let selector = document.getElementById("promotionOptions") 
 
 selector.addEventListener("change", () => {
     let pieces = document.getElementById("promotionOptions")
     let piece = pieces.options[pieces.selectedIndex].value
     move =  move + piece
+    $("#promotionOptions").val("none")
     $.when(validMove(move)).then(function successHandler(response){
    
       moveValid = response.valid
@@ -70,6 +72,7 @@ selector.addEventListener("change", () => {
           playerTurn = "white"
       }
     document.getElementById("playerTurn").innerHTML = playerTurn
+    
           
     resetAll()
 }else{

@@ -30,6 +30,7 @@ urlpatterns = [
     path('templates/authenticate',users.authenticate),
     path('boardStates', playground.boardStates),
     path('validMove', playground.validMove),
+    path('AiMove', playground.AiMove),
     path('templates/addUser',users.addUser),
     path('',playground.home)
 ]

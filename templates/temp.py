@@ -2,14 +2,26 @@
 import chess
 import chess.engine
 import numpy 
+Boardsnaps = []
+Boardscores = []
+board = chess.Board()
 
 
 
 
-def getScore(board):
-    with chess.engine.SimpleEngine.popen_uci("templates\stockfish.exe") as stockfish: #Calling a powerfull AI to give the approximate score for a given board position
-        info = stockfish.analyse(board, chess.engine.Limit(time=0.1))
-        return info["score"].white().score()
+def getScore(board,side):
+    with chess.engine.SimpleEngine.popen_uci("templates\stockfish.exe") as stockfish: #Calling a well known chess AI to give an estimated board score at a certain position for a given board position
+        info = stockfish.analyse(board, chess.engine.Limit(time=0.01))
+        if info["score"] == "None":
+            return 0
+        if str(info["score"].relative) == "#-0" and side:
+            return 100000000000000
+        if str(info["score"].relative) == "#-0"and (not(side)):
+            return -100000000000000
+        if "#" in str(info["score"].relative):
+            return int(str(info["score"].relative)[1:])
+        else:
+            return int(str(info["score"].relative))
 
 
 
@@ -134,10 +146,59 @@ def ConvertToAIboard(board):
 
     return(AIboard)
 
-board = chess.Board()
-# def SaveBoard(board):
-Score = getScore(board)
-AIboard = ConvertToAIboard(board)
 
 
-print(AIboard)
+def CreateSaveFiles():
+    AIboard = numpy.zeros((14, 8, 8), dtype=numpy.int8)
+    Scores = numpy.array([0])
+    numpy.save("Boards.npy",AIboard,True)
+    numpy.save("Scores.npy",Scores,True)
+
+
+def SaveBoardData(board):
+    if not board.is_checkmate():
+        AIboard = ConvertToAIboard(board)
+        Score = getScore(board,board.turn)
+        Boardsnaps.append(AIboard)
+        Boardscores.append(Score)
+    else:
+        SaveBoard(Boardsnaps,Boardscores)
+
+
+def SaveBoard(Boardsnaps,Boardscores):
+    Boards = numpy.load("Boards.npy")
+    for snap in Boardsnaps:
+        Boards = numpy.concatenate((Boards,snap))
+    numpy.save("Boards.npy",Boards, True)
+
+    Scores = numpy.load("Scores.npy")
+    Scores = numpy.concatenate((Scores,Boardscores))
+    numpy.save("Scores.npy",Scores, True)
+
+
+
+
+
+CreateSaveFiles()
+
+
+
+
+board.push_san("e2e4")
+SaveBoardData(board)
+board.push_san("g7g5")
+SaveBoardData(board)
+board.push_san("f1c4")
+SaveBoardData(board)
+board.push_san("f7f5")
+SaveBoardData(board)
+board.push_san("d1h5")
+SaveBoardData(board)
+
+for i in numpy.load("Boards.npy"):
+    print(i)
+for i in numpy.load("Scores.npy",allow_pickle=True):
+    print(i)
+
+
+

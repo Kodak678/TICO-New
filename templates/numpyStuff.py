@@ -1,44 +1,271 @@
-from array import array
-import numpy
+
+
+import chess
+import chess.engine
+
+import tensorflow as tf
+from tensorflow import keras
+from keras import layers, models
+import numpy 
+
+# Boardsnaps = []
+# Boardscores = []
+# board = chess.Board()
+# import os
+# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' #Tells program to ignore an unimportant warning
+
+
+letterToCoordinate = {
+  'a': 0,
+  'b': 1,
+  'c': 2,
+  'd': 3,
+  'e': 4,
+  'f': 5,
+  'g': 6,
+  'h': 7
+}
+
+
+
+def coordinateToIndex(square):
+  letter = chess.square_name(square) #This function call converts the square index of a square such as 28 to its name; which for '28' would be 'e4'
+  return 8 - int(letter[1]), letterToCoordinate[letter[0]] #This part takes that name, e.g. 'e4' and convert this position to its coordinate of 4 4 using the letterToCoordinate dictionary to convert the letter
+
+
+def ConvertToAIboard(board):
+    #This program turns the chess board into something the AI can analyse better
+    AIboard = numpy.zeros((14, 8, 8), dtype=numpy.int8)
+    pawn_number = 1
+    knight_number = 2
+    bishop_number = 3
+    rook_number = 4
+    queen_number = 5
+    king_number = 6
+
+
+    #unravel_index converts an index such as 9 into its corresponding co ordinate for an array of given dimensions.
+    #for example: in an 8 by 8 dimensional array: the co ordinates corresponding to the index 9 would be (1,1)
+    #The index (1,1) was calculated by doing 1 x 8 + 1 to get 9
+
+    for index in board.pieces(pawn_number, True):
+        position = numpy.unravel_index(index, (8, 8))  #In a board of 64, each coordinate is represented by an index numberered from 0 to 63, in order to convert this index to a coordinate: I have unravelled it
+        AIboard[pawn_number - 1][position[0]][position[1]] = 1 #The first coordinate is the number of the array (out of 12) the second coordinate and the other two are y and x coordinates respectively
+    for index in board.pieces(pawn_number, False): #First the indexes of all the white pieces of the piece number are added to the numpy array: AIboard
+        position = numpy.unravel_index(index, (8, 8))
+        AIboard[pawn_number][position[0]][position[1]] = 1
+
+
+    for index in board.pieces(knight_number, True):
+        position = numpy.unravel_index(index, (8, 8))
+        AIboard[knight_number][position[0]][position[1]] = 1
+    for index in board.pieces(knight_number, False):
+        position = numpy.unravel_index(index, (8, 8))
+        AIboard[knight_number + 1][position[0]][position[1]] = 1
+
+
+    for index in board.pieces(bishop_number, True):
+        position = numpy.unravel_index(index, (8, 8))
+        AIboard[bishop_number + 1][position[0]][position[1]] = 1
+    for index in board.pieces(bishop_number, False):
+        position = numpy.unravel_index(index, (8, 8))
+        AIboard[bishop_number + 2][position[0]][position[1]] = 1
+
+
+    for index in board.pieces(rook_number, True):
+        position = numpy.unravel_index(index, (8, 8))
+        AIboard[rook_number + 2][position[0]][position[1]] = 1
+    for index in board.pieces(rook_number, False):
+        position = numpy.unravel_index(index, (8, 8))
+        AIboard[rook_number + 3][position[0]][position[1]] = 1
+
+
+    for index in board.pieces(queen_number, True):
+        position = numpy.unravel_index(index, (8, 8))
+        AIboard[queen_number + 3][position[0]][position[1]] = 1
+    for index in board.pieces(queen_number, False):
+        position = numpy.unravel_index(index, (8, 8))
+        AIboard[queen_number + 4][position[0]][position[1]] = 1
+
+
+    for index in board.pieces(king_number, True):
+        position = numpy.unravel_index(index, (8, 8))
+        AIboard[king_number + 4][position[0]][position[1]] = 1
+    for index in board.pieces(king_number, False):
+        position = numpy.unravel_index(index, (8, 8))
+        AIboard[king_number + 5][position[0]][position[1]] = 1
+
+
+
+    #The pairs of for loops create 2, two dimensional numpy arrays with ones representing the case where a piece of the 
+    #corresponding number and color is positioned on it
 
 
 
 
-def CreateSaveFiles():
-    AIboard = numpy.zeros((1, 8, 8), dtype=numpy.int8)
-    Scores = [0]
-    Scores = numpy.array(Scores)
-    numpy.save("Boards.npy",AIboard)
-    numpy.save("Scores.npy",Scores)
+    RealTurn = board.turn
+    board.turn = chess.WHITE
+    for move in board.generate_legal_captures():
+        y , x = coordinateToIndex(move.to_square)
+        AIboard[12][y][x] = 1
 
-# fake = numpy.ones((1,8,8), dtype=numpy.int8).tolist()
-# b = numpy.load("trying.npy")
+    board.turn = chess.BLACK
+    for move in board.generate_legal_captures():
+        y , x = coordinateToIndex(move.to_square)
+        AIboard[13][y][x] = 1
 
-# BoardSnaps = []
+    board.turn = RealTurn
 
-# for i in range(0,4):
-#     BoardSnaps.append(fake)
-
-# for snap in BoardSnaps:
-#     b = numpy.concatenate((b,snap))
-# numpy.save("trying.npy",b)
-# print(numpy.load("trying.npy"))
-AIboard = numpy.ones((1, 8, 8), dtype=numpy.int8)
-Scores = [32]
+    #The above chunk of code turns all the squares that black and white can capture a piece on and converts it into into a square index
+    #The chunck of code saves the current player turn in a temporray variable to retore to once its simulated the board from the perspective of both players
 
 
-def SaveBoard(Boardsnaps,Boardscores):
-    
-    Boards = numpy.load("Boards.npy")
-    for snap in Boardsnaps:
-        Boards = numpy.concatenate((Boards,snap))
-    numpy.save("Boards.npy",Boards)
+    return(AIboard)
 
-    Scores = numpy.load("Scores.npy")
-    Scores = numpy.concatenate((Scores,Score))
-    numpy.save("Scores.npy",Scores)
+def getScore(board,side):
+    with chess.engine.SimpleEngine.popen_uci("templates\stockfish.exe") as stockfish: #Calling a well known chess AI to give an estimated board score at a certain position for a given board position
+        info = stockfish.analyse(board, chess.engine.Limit(time=0.01))
+        if info["score"] == "None":
+            return 0
+        if str(info["score"].relative) == "#-0" and side:
+            return 100000000000000
+        if str(info["score"].relative) == "#-0"and (not(side)):
+            return -100000000000000
+        if "#" in str(info["score"].relative):
+            return int(str(info["score"].relative)[1:])
+        else:
+            return int(str(info["score"].relative))
 
-CreateSaveFiles()
-# SaveBoard(AIboard,Scores)
-print(numpy.load("Boards.npy"))
-print(numpy.load("Scores.npy"))
+
+# #White win
+# board.push_san("e2e4")
+# print(getScore())
+
+# board.push_san("g7g5")
+# print(getScore())
+
+# board.push_san("f1c4")
+# print(getScore())
+
+# board.push_san("f7f5")
+# print(getScore())
+
+# board.push_san("d1h5")
+# print(getScore())
+
+
+
+
+
+
+
+
+#Black win
+# board.push_san("f2f4")
+# print(getScore())
+
+# board.push_san("e7e5")
+# print(getScore())
+
+# board.push_san("g2g4")
+# print(getScore())
+
+# board.push_san("d8h4")
+# print(getScore())
+
+
+
+
+def miniMax(board, depth, alpha, beta, maxscorer):
+    if depth == 0 or board.is_game_over():
+        # Scorset = []
+        # Scorset.append(getScore(board,not(board.turn)))
+        return getScore(board,not(board.turn))
+
+    child_nodes = list(board.legal_moves)
+
+    if maxscorer == False:
+        worstScore = numpy.inf
+        for child in child_nodes:
+            board.push(child)
+            position_evaluation = miniMax(board,depth-1,alpha, beta, True)
+            board.pop()
+            if position_evaluation < worstScore:
+                worstScore = position_evaluation
+                best_move = child
+            beta = min(beta,position_evaluation)
+            if beta <= alpha:
+                break
+        return worstScore
+    elif maxscorer == True:
+        bestScore = -numpy.inf
+        for child in child_nodes:
+            board.push(child)
+            position_evaluation = miniMax(board,depth-1,alpha, beta, False)
+            board.pop()
+            if position_evaluation > bestScore:
+                bestScore = position_evaluation
+                best_move = child
+            alpha = max(alpha,position_evaluation)
+            if beta <= alpha:
+                break
+        return bestScore
+
+
+
+
+board = chess.Board()
+board.push_san("f2f4")
+# print(ConvertToAIboard(board))
+# Black win
+# board.push_san("e7e5")
+# board.push_san("g2g4")
+# board.push_san("d8h4")
+
+
+# # #White win
+# board.push_san("e2e4")
+# board.push_san("g7g5")
+# board.push_san("f1c4")
+# board.push_san("f7f5")
+# board.push_san("d1h5")
+
+
+
+
+
+
+# for move in child_nodes:
+#     print(move)
+#     board.push(move)
+#     print(getScore(board,not(board.turn)))
+#     board.pop()
+# print(getScore(board))
+
+
+print(miniMax(board, 2, -numpy.inf , numpy.inf , False))
+
+
+
+
+
+
+
+
+
+# AIboard = ConvertToAIboard(board)
+
+# x = numpy.load("Boards.npy")
+
+# y = numpy.load("Scores.npy")
+# y = numpy.asarray(y / abs(y).max() / 2 + 0.5, dtype=numpy.float32) # normalization (0 - 1)
+
+# x = x.reshape(5,14,8,8)
+
+# model = tf.keras.models.Sequential([tf.keras.layers.Flatten(input_shape = (14,8,8)), 
+#                                     tf.keras.layers.Dense(128, activation=tf.nn.relu), 
+#                                     tf.keras.layers.Dense(1, activation=tf.nn.sigmoid)])
+# model.compile(optimizer=tf.keras.optimizers.Adam(), loss= 'sparse_categorical_crossentropy')
+# model.fit(x,y,epochs=10)
+# m = AIboard.reshape(1,14,8,8)
+# print(model.predict(x))

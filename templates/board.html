@@ -129,7 +129,7 @@
     <div id = "promotionDiv" class = "hidePromotionDiv">
       <h4 class="hidePromotionTitle" id = "promotionTitle">Choose what piece to promote to:</h4>
       <select name="promotionPieces" id="promotionOptions" class = "hidePromotionSelection">
-        <option selected value="none"></option>
+        <option value="none" selected disabled>-- Select Piece --</option>
         <option value="q">Queen</option>
         <option value="r">Rook</option>
         <option value="b">Bishop</option>
@@ -234,6 +234,18 @@ function getStates(){
 }
 
 
+
+function getAImove(){
+  return $.ajax({
+    url: '/AiMove',
+    type: 'get',
+    async: false,
+    data: {
+        stuff : "getting Aimove",
+    }});
+}
+
+
 function validMove(moveMade){
   let csrf = $('input[name=csrfmiddlewaretoken]').val();  
   return $.ajax({
@@ -246,7 +258,19 @@ function validMove(moveMade){
     }});
 }
 
-
+function AIPlay(){
+  $.when(getAImove()).then(function successHandler(response){
+   
+   move = response.move
+  },
+  function errorHandler(){
+    console.log("Error has occurred")
+  })
+  AIsquare = move.substring(0, 2)
+  AIsquareTarget = move.substring(2, 4)
+  moveOnScreen(AIsquare,AIsquareTarget)
+  console.log(move)
+}
 
 
 function action(event){
@@ -270,7 +294,6 @@ function action(event){
   
   }
   else{
-    
     
     
     targetSquare = String(event.target.id);
@@ -360,10 +383,13 @@ else  if (promotionPlaces.includes(move.slice(2,4)) && document.getElementById(c
   
 }
 
+
 else{
   console.log("In valid move")
   resetAll()
 }
+
+  AIPlay()
 }
 }
 
