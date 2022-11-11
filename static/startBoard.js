@@ -5,7 +5,9 @@ let targetSquare = ""
 let playerTurn = "white"
 
 let move = ""
-        
+
+let playerSide = ""
+
 function reset_game(){
     BlackPawns = ["a7","b7","c7","d7","e7","f7","g7","h7"];
     for (let i of BlackPawns) {

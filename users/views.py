@@ -5,6 +5,8 @@ import sqlite3
 
 
 
+# conn = sqlite3.connect('users.db')
+# c = conn.cursor()
 
 # c.execute("""CREATE TABLE UserInfo (
 #     Username text,
@@ -21,7 +23,17 @@ import sqlite3
 # conn.commit()
 # conn.close()
 
-# Create your views here.
+def hashPassword(Username, Password):
+    Pass = Username + Password
+    Password = ""
+    Sum = 0
+    for character in Pass:
+        Password += str(ord(character))
+        Sum += ord(character)
+    Password =  int(Password) - Sum
+    Password = str(Sum) + str(Password) 
+    return Password
+
 
 
 def login(request):
@@ -37,17 +49,17 @@ def authenticate(request):
     c = conn.cursor()
 
     if ((not username) or (not password)):
-        messages.error(request, f'Empty or invalid fields submitted!')
+        messages.error(request, f'Empty field/s submitted!')
         return redirect('login.html')
     else :
-        
+        password = hashPassword(username, password)
         c.execute("SELECT * FROM Users WHERE Username = (:Username) AND Password = (:Password)", {'Username': username, 'Password':password})
 
         if len(c.fetchall()) == 1:
             messages.success(request,f'User with username: {username} has been successfully logged in!' )
             return redirect('mainpage.html')
         else:
-            messages.error(request, 'Incorrect username or password...')
+            messages.error(request, 'Incorrect username and/or password...')
             return redirect('login.html')
     
 
@@ -80,6 +92,7 @@ def addUser(request):
 
         if len(c.fetchall()) == 0:
             messages.success(request,f'User with username: {Username} has been successfully registered.' )
+            Password = hashPassword(Username, Password)
             with conn:
                 c.execute("INSERT INTO Users VALUES (?,?)", (Username, Password))
                 c.execute("INSERT INTO UserInfo VALUES (?,?,?,?)", (Username, FirsName, LastName, Email))
@@ -93,5 +106,5 @@ def addUser(request):
   
 
 
- 
+
 

@@ -65,3 +65,10 @@ BoardPositions = {
     (8,8) : "h1",
 }
 
+word = "Dog"
+def checker(w):
+    if w == "Dog":
+        print("Hello")
+    print("fish")
+
+checker(word)

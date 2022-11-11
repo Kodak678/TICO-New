@@ -1,13 +1,16 @@
 
-let selector = document.getElementById("promotionOptions") 
 
+let selector = document.getElementById("promotionOptions") 
+// Adding an event listener now that the promotions menu is visible.
 selector.addEventListener("change", () => {
     let pieces = document.getElementById("promotionOptions")
     let piece = pieces.options[pieces.selectedIndex].value
     move =  move + piece
+    $("#promotionOptions").val("none")
     $.when(validMove(move)).then(function successHandler(response){
    
       moveValid = response.valid
+ 
      },
      function errorHandler(){
        console.log("Error has occurred")
@@ -60,6 +63,7 @@ selector.addEventListener("change", () => {
           }
         }
     resetCurrentSquare(currentSquare)
+
     document.getElementById("promotionDiv").setAttribute("class", "hideromotionDiv")
     document.getElementById("promotionTitle").setAttribute("class", "hidePromotionTitle")
     document.getElementById("promotionOptions").setAttribute("class", "hidePromotionSelection")
@@ -70,6 +74,9 @@ selector.addEventListener("change", () => {
           playerTurn = "white"
       }
     document.getElementById("playerTurn").innerHTML = playerTurn
+    document.getElementById("board").setAttribute("class", "chessboardDisabled")
+    AIPlay()
+
           
     resetAll()
 }else{
