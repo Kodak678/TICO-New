@@ -31,6 +31,8 @@ urlpatterns = [
     path('boardStates', playground.boardStates),
     path('validMove', playground.validMove),
     path('AiMove', playground.AiMove),
+    path('resetBoard', playground.resetBoard),
+    path('getWinner', playground.getWinner),
     path('templates/addUser',users.addUser),
     path('',playground.home)
 ]

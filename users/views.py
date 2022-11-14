@@ -1,7 +1,11 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 import sqlite3
+import tensorflow as tf
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' #Tells program to ignore an unimportant warning
+loggedInUser = ""
+
 
 
 
@@ -43,6 +47,7 @@ def register(request):
     return render(request, 'register.html')
 
 def authenticate(request):
+    global loggedInUser
     username = request.POST['Username']
     password = request.POST['Password']
     conn = sqlite3.connect('users.db')
@@ -57,11 +62,21 @@ def authenticate(request):
 
         if len(c.fetchall()) == 1:
             messages.success(request,f'User with username: {username} has been successfully logged in!' )
+            loggedInUser = username
             return redirect('mainpage.html')
         else:
             messages.error(request, 'Incorrect username and/or password...')
             return redirect('login.html')
     
+
+def create_model():
+    model = tf.keras.models.Sequential([tf.keras.layers.Flatten(input_shape = (14,8,8)), 
+                                        tf.keras.layers.Dense(128, activation=tf.nn.relu), 
+                                        tf.keras.layers.Dense(1, activation=tf.nn.sigmoid)])
+    model.compile(optimizer=tf.keras.optimizers.Adam(5e-4), loss= 'mean_squared_error')
+    return model
+
+
 
 def addUser(request):
     conn = sqlite3.connect('users.db')
@@ -92,6 +107,11 @@ def addUser(request):
 
         if len(c.fetchall()) == 0:
             messages.success(request,f'User with username: {Username} has been successfully registered.' )
+
+            model = create_model()
+            model.load_weights(f'./users/TICOweights/TICO')
+            model.save(f'./models/{Username}')
+            #The above code creates a model with some basic training for each user so that it can then be loaded for the minimax
             Password = hashPassword(Username, Password)
             with conn:
                 c.execute("INSERT INTO Users VALUES (?,?)", (Username, Password))

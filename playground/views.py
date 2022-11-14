@@ -10,7 +10,7 @@ import numpy
 board = chess.Board()
 
 
-# Create your views here.
+
 
 
 def getScore(board,side):
@@ -31,8 +31,6 @@ def getScore(board,side):
 
 def miniMax(board, depth, alpha, beta, maxscorer):
     if depth == 0 or board.is_game_over():
-        # Scorset = []
-        # Scorset.append(getScore(board,not(board.turn)))
         return getScore(board,not(board.turn)) #Supplying the opposite of the board turn 
 
     child_nodes = list(board.legal_moves)
@@ -91,17 +89,39 @@ def boardStates(request):
     "whiteKingSide": whiteKingSide,
     "whiteQueenSide": whiteQueenSide,
     "blackQueenSide": blackQueenSide,
-    "blackKingSide": blackKingSide,
-     },status = 200)
+    "blackKingSide": blackKingSide},status = 200)
+
+
+
+def resetBoard(request):
+    temp = request.GET.get('hide')
+    board.reset()
+    return JsonResponse({"reset":True}, status = 200)
+
+def getWinner(request):
+    temp = request.GET.get('hide')
+    winner = board.outcome().winner
+    if winner == True:
+        winner = "White Wins!"
+    else:
+        winner = "Black Wins!"
+    return JsonResponse({"winner":winner}, status = 200)
+
 
 def validMove(request):
     move = str(request.POST.get('move'))
     m = isValid(move)
+    gameOver = board.is_game_over()
     return JsonResponse({
+    "gameOver": gameOver,
     "valid": m }, status = 200)
     
 def load_board(request):
-    return render(request, 'board.html') 
+    from users import views as users
+    if users.loggedInUser == "":
+        return render(request, 'mainpage.html')
+    else:
+        return render(request, 'board.html') 
     
 def home(request):
     return render(request, 'mainpage.html')
@@ -114,24 +134,30 @@ def AiMove(request):
     whiteQueenSide = bool(chess.BB_A1)
     blackQueenSide = bool(chess.BB_A8)
     blackKingSide = bool(chess.BB_H8)
+    
+    try:
+        child_nodes = list(board.legal_moves)
+        move = random.choice(child_nodes)
+        board.push(move)
+        moveAI = str(move)
+    except IndexError: #What to do if the the game is over (AI lost) 
+        moveAI = ""
+    gameOver = board.is_game_over()
 
-
-    child_nodes = list(board.legal_moves)
-    move = random.choice(child_nodes)
-    board.push(move)
-    moveAI = str(move)
-
-
-    # Stockfish = chess.engine.SimpleEngine.popen_uci("templates\stockfish.exe")
-    # moveAI = Stockfish.play(board,chess.engine.Limit(time=0.1))
-    # Stockfish.quit()
-    # board.push(moveAI.move)
-    # moveAI = str(moveAI.move)  
-
+    # try:
+    #     Stockfish = chess.engine.SimpleEngine.popen_uci("templates\stockfish.exe")
+    #     moveAI = Stockfish.play(board,chess.engine.Limit(time=0.1))
+    #     Stockfish.quit()
+    #     board.push(moveAI.move)
+    #     moveAI = str(moveAI.move)
+    # except AttributeError: #What to do if the the game is over (AI lost) 
+    #     moveAI = ""  
+    # gameOver = board.is_game_over()
     
     return JsonResponse({"legalEnPassant": legalEnPassant,
     "whiteKingSide": whiteKingSide,
     "whiteQueenSide": whiteQueenSide,
     "blackQueenSide": blackQueenSide,
     "blackKingSide": blackKingSide,
-    "moveAI": moveAI }, status = 200)
+    "moveAI": moveAI,
+    "gameOver":gameOver }, status = 200)

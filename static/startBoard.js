@@ -8,6 +8,23 @@ let move = ""
 
 let playerSide = ""
 
+
+
+ 
+function resetBoard(){
+  $.ajax({
+    url: '/resetBoard',
+    type: 'get',
+    async: false,
+    data: {
+        hide : "ResetBoard"},
+  })};
+
+
+
+
+
+
 function reset_game(){
     BlackPawns = ["a7","b7","c7","d7","e7","f7","g7","h7"];
     for (let i of BlackPawns) {
@@ -93,22 +110,11 @@ function reset_game(){
     document.getElementById("e1").setAttribute("player",WhiteKing.getColor())
     
     document.getElementById("playerTurn").innerHTML = playerTurn
+
+    
+    resetBoard()
 }
 
-
-//        if board.is_checkmate():
-//          document.getElementById.innerHTML("playerTurn", "playerTurn" + " wins!")
-
-     
-//      if board.is_checkmate():
-//        if playerTurn == "white":
-//          playerTurn = "black"
-//        else:
-//          playerTurn = "white"
-//        document.getElementById.innerHTML("playerTurn", playerTurn + " wins!")            
-          
-//     }
-// }        
-
+  
     
 reset_game()

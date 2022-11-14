@@ -3,8 +3,7 @@ import chess
 import chess.engine
 import numpy 
 import tensorflow as tf
-from tensorflow import keras
-from keras import layers, models, optimizers, callbacks
+from keras import models
 import os
 Boardsnaps = []
 Boardscores = []
@@ -155,19 +154,14 @@ def SaveBoardData(board): #Creates and stores a picture of the chess board in th
 
 
 def SaveBoard(Boardsnaps,Boardscores):
-    numpy.save("TestBoards.npy",Boardsnaps, True)
-    numpy.save("TestScores.npy",Boardscores, True)
+    numpy.save("ManyBoards.npy",Boardsnaps, True)
+    numpy.save("ManyScores.npy",Boardscores, True)
 
 
 
 
 
 
-def get_dataset():
-	container = numpy.load('dataset.npz')
-	b, v = container['b'], container['v']
-	v = numpy.asarray(v / abs(v).max() / 2 + 0.5, dtype=numpy.float32) # normalization (0 - 1)
-	return b, v
 
 
 def generate_data(): #To generate data for my heuristic model to learn from.
@@ -179,7 +173,8 @@ def generate_data(): #To generate data for my heuristic model to learn from.
         temp_board.push(move)
         SaveBoardData(temp_board)
 
-# for i in range(0,5):  #All player's weights should be initialized with some exposure to some data    
+
+# for i in range(0,10):  #All player's weights should be initialized with some exposure to some data    
 #     generate_data()  # to create the data needed
 
 # This ^ generates about 1750 board snaps and corresponding board scores which are stored in ManyBoards.npy and ManyScores.npy
@@ -211,15 +206,11 @@ def generate_data(): #To generate data for my heuristic model to learn from.
 # SaveBoardData(board)
 
 
-# print(board)
-# AIboard = ConvertToAIboard(board)
-# print(AIboard)
-x_test = numpy.load("TestBoards.npy")
-# print(x)
-y_test = numpy.load("TestScores.npy")
-# print(y)
+
+x_test = numpy.load("ManyBoards.npy")
+y_test = numpy.load("ManyScores.npy")
 y_test = numpy.asarray(y_test / abs(y_test).max() / 2 + 0.5, dtype=numpy.float32) # normalization (0 - 1)
-# print(y)
+
 
 
 def create_model():
@@ -235,38 +226,29 @@ def train_model(user):
     x = numpy.load("Boards.npy")
     y = numpy.load("Scores.npy")
     y = numpy.asarray(y / abs(y).max() / 2 + 0.5, dtype=numpy.float32) # normalization (0 - 1)
-    model = create_model()
-    model.load_weights(f'./weights/{user}/{user}')
-    model.fit(x,y,epochs=10)
-    model.save_weights(f'./weights/{user}/{user}')
-
-
-
-
-# model = create_model()    
-# model.fit(x_test,y_test,epochs=100)
-
-
-
-
+    model = models.load_model(f'./models/{user}')
+    model.fit(x,y,epochs=100)
+    model.save(f'./models/{user}')
 
 
 user = "TICO"
-# train_model("Bob")
-model = create_model()
-model.fit(x_test,y_test,epochs=100)
+model = models.load_model(f'./models/{user}')
+# model = create_model()
+model.load_weights(f'./users/TICOweights/TICO')
+# model.save_weights(f'./users/TICOweights/{user}')
+# board.push_san("f2f4")
+
+x = ConvertToAIboard(board)
+# print(x)
+x = x.reshape(1,14,8,8)
+print(model.predict(x))
+
+
+# print(x)
+
+
+
 
 
 # results = model.evaluate(x_test, y_test, batch_size=128)
 # print("test loss, test acc:", results)
-# model.save_weights(f'./weights/{user}/{user}')
-# model.summary()
-
-# print(model.predict(x))
-
-
-
-
-
-
-

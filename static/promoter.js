@@ -10,7 +10,7 @@ selector.addEventListener("change", () => {
     $.when(validMove(move)).then(function successHandler(response){
    
       moveValid = response.valid
- 
+      gameOver = response.gameOver
      },
      function errorHandler(){
        console.log("Error has occurred")
@@ -75,10 +75,14 @@ selector.addEventListener("change", () => {
       }
     document.getElementById("playerTurn").innerHTML = playerTurn
     document.getElementById("board").setAttribute("class", "chessboardDisabled")
-    AIPlay()
+    if (!(gameOver)){
+      resetAll()
+      AIPlay()
+      }
+      else{
+        console.log(gameOver)
+      }
 
-          
-    resetAll()
 }else{
   resetAll()
   document.getElementById("promotionDiv").setAttribute("class", "hideromotionDiv")
