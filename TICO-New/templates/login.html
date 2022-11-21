@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Page</title>
+  </head>
+  <style>
+    form {
+      display: block;
+      margin-top: auto;
+      margin-left: auto;
+      margin-right: auto;
+      background-color: rgb(0, 21, 255);
+      height: 20%;
+      width: 25%;
+      margin-top: 10%;
+      font-size: 50px;
+      text-align: center;
+    }
+    input {
+      font-size: 25px;
+    }
+    .messages {
+      cursor: pointer;
+      float: left;
+      width: 100%;
+      height: 160px;
+      background-color: rgb(255, 255, 255);
+      font-size: 50px;
+      text-align: center;
+      display: table-cell;
+      vertical-align: middle;
+    }
+    .forgottenlink{
+    left: 0.5%;
+    top: 1%;
+    color: rgb(255, 255, 255);
+    font-family: "Inter UI", "SF Pro Display", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+    sans-serif;
+    font-weight: 500;
+    padding: 1em 1em 1.5em;
+    text-decoration: none;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: block;
+    justify-content: center;
+    position: absolute;
+    border-color: black;
+    border-radius: 3px;
+    font-size: xx-large;
+    background-color: #f6ff00;
+    min-width: 160px;
+    height: 2rem;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    }
+  </style>
+  <body>
+    <a type="a" class = "forgottenlink" href="/templates/forgotten.html"  onclick="alert('Check your email for instructions!')">Forgot my password!</a>
+    <form action="authenticate" method="post">
+      {% csrf_token %}
+      <label class="big" for="Username">Username:</label><br />
+      <input type="text" id="Username" name="Username" value="" /><br />
+      <label for="Password">Password:</label><br />
+      <input class="big" type="password" id="pass" name="Password" value="" /><br /><br />
+      <input type="submit" value="Submit" />
+    </form>
+    <div class="messages">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </body>
+</html>
