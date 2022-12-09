@@ -13,7 +13,7 @@
       margin-left: auto;
       margin-right: auto;
       background-color: rgb(13, 28, 232);
-      height: 20%;
+      height: 15%;
       width: 50%;
       margin-top: 1%;
       font-size: 100px;
@@ -30,16 +30,17 @@
       display: table-cell;
       vertical-align: middle;
     }
+    
   </style>
   <body>
-    <h1>{{Username}}</h1>
-    <a type="a" href="/templates/board.html">Play!</a
-    ><a type="a" href="/templates/login.html">Login!</a
-    ><a type="a" href="/templates/register.html">Register!</a> ><a
-      type="a"
-      onclick="alert('Hello world!')"
-      >Leaderboard!</a
-    >
+    {% if Username %}
+    <h1>You are logged in as: {{Username}}</h1>
+    {% endif %}
+    <a type="a" href="/templates/profile.html">My Account</a>
+    <a type="a" href="/templates/board.html">Play!</a>
+    <a type="a" href="/templates/login.html">Login!</a>
+    <a type="a" href="/templates/register.html">Register!</a>
+    <a type="a" href="/templates/leaderboard.html">Leaderboard!</a>
     <div class="messages">
       {% if messages %}
         {% for message in messages %}
@@ -49,5 +50,6 @@
         {% endfor %}
       {% endif %}
     </div>
+    <script></script>
   </body>
 </html>

@@ -14,6 +14,13 @@
       margin: 20px;
       border: 25px solid rgb(0,0,0);
     }
+    .chessboardDisabled {
+      pointer-events: none;
+      width: 640px;
+      height: 640px;
+      margin: 20px;
+      border: 25px solid rgb(0,0,0);
+    }
     .hidePromotionDiv {
       position: absolute;
       width: 640px;
@@ -113,6 +120,30 @@
     .showPromotionSelection{
       display: block;
     }
+    .mainpagelink{
+    right: 0.5%;
+    top: 15%;
+    color: rgb(255, 255, 255);
+    font-family: "Inter UI", "SF Pro Display", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+    sans-serif;
+    font-weight: 500;
+    padding: 1em 1em 1.5em;
+    text-decoration: none;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: block;
+    justify-content: center;
+    position: absolute;
+    border-color: black;
+    border-radius: 3px;
+    font-size: xx-large;
+    background-color: #ff00b7;
+    min-width: 160px;
+    height: 2rem;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    }
   </style>
 
 
@@ -121,7 +152,7 @@
     <div class = "optionsDiv" id="optionsDiv">
       <p class = "p">Current Player's Turn:</p>
       <button id = "playerTurn" class = "playerTurn"></button>
-      <p class = "p">Currently sellected piece:</p>
+      <p id = "pieceSelect" class = "p">Currently sellected piece:</p>
       <button class = "green" id = "current"></button>
       <p class = "p">Last legal move:</p>
       <button class = "biege" id = "move"></button>
@@ -129,14 +160,15 @@
     <div id = "promotionDiv" class = "hidePromotionDiv">
       <h4 class="hidePromotionTitle" id = "promotionTitle">Choose what piece to promote to:</h4>
       <select name="promotionPieces" id="promotionOptions" class = "hidePromotionSelection">
-        <option selected value="none"></option>
+        <option value="none" selected disabled>-- Select Piece --</option>
         <option value="q">Queen</option>
         <option value="r">Rook</option>
         <option value="b">Bishop</option>
         <option value="n">Knight</option>   
       </select>
     </div>
-    <div class="chessboard">
+    <a type="a" class= "mainpagelink" href="mainpage.html">Back to Mainpage</a>
+    <div id= "board" class="chessboard">
       <!-- 1st -->
       <button rank="1" file="1" player="" piece ="" class="white" onClick = "action(event)" id="a8"></button>
       <button rank="1" file="2" player="" piece ="" class="black" onClick = "action(event)" id="b8"></button>
@@ -214,12 +246,23 @@
     {% csrf_token %}
     <script>
 
+
+
 let legalEnPassant = false
 let whiteKingSide = false
 let whiteQueenSide = false
 let blackQueenSide = false 
 let blackKingSide = false   
 let moveValid = false
+
+
+
+
+
+
+
+
+
 
 
 
@@ -232,6 +275,9 @@ function getStates(){
         hide : "getting Boardstates",
     }});
 }
+
+
+
 
 
 function validMove(moveMade){
@@ -249,33 +295,26 @@ function validMove(moveMade){
 
 
 
+
+
+
+
 function action(event){
   const promotionPlaces = ["a8","b8","c8","d8","e8","f8","g8","h8","a1","b1","c1","d1","e1","f1","g1","h1"];
   const enPassantPositions = ["a6","b6","c6","d6","e6","f6","g6","h6","a3","b3","c3","d3","e3","f3","g3","h3"];
   let csrf = $('input[name=csrfmiddlewaretoken]').val();
-  
-
-  
-
-
-
-
-
-
-
 
   if (currentSquare == ""){
   currentSquare = String(event.target.id);
   document.getElementById("current").innerHTML = currentSquare
-  
+  //If there was no current square selected then the id of the clicked on element becomes the current square
   }
   else{
-    
-    
     
     targetSquare = String(event.target.id);
     
     move = currentSquare + targetSquare
+    //If there was a current square than the target square bceomes the cliked on element
     
 $.when(getStates()).then(function successHandler(response){
     
@@ -284,24 +323,30 @@ $.when(getStates()).then(function successHandler(response){
     whiteQueenSide = response.whiteQueenSide
     blackQueenSide = response.blackQueenSide
     blackKingSide = response.blackKingSide
-    
  },
  function errorHandler(){
    console.log("Error has occurred")
  })
+//Getting whether each side has casling rights
+
 
 $.when(validMove(move)).then(function successHandler(response){
    
   moveValid = response.valid
+  gameOver = response.gameOver
  },
  function errorHandler(){
    console.log("Error has occurred")
  })
+//An ajax call to get whether the move is valid from the django side
+
 
 
 if (moveValid == true){
+  
   document.getElementById("move").innerHTML = move
   if (document.getElementById(currentSquare).getAttribute("piece") == "pawn" && document.getElementById(targetSquare).getAttribute("piece") == "" && enPassantPositions.includes(move.slice(2,4)) && legalEnPassant){
+    console.log("enpassanting")
              if (document.getElementById(currentSquare).getAttribute("player") == "white"){
                  document.getElementById(move.slice(2,3) + String((Number(move.slice(3,4))-1))).innerHTML = ""
                  document.getElementById(move.slice(2,3) + String((Number(move.slice(3,4))-1))).setAttribute("piece","")
@@ -312,9 +357,9 @@ if (moveValid == true){
                  document.getElementById(move.slice(2,3) + String((Number(move.slice(3,4))+1))).setAttribute("piece","")
                  document.getElementById(move.slice(2,3) + String((Number(move.slice(3,4))+1))).setAttribute("player","")
                 }
-                 
+                moveOnScreen(currentSquare,targetSquare)
   }
-  
+  //The above if statement deals with en passent captures on the GUI side
   
 
   else if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "white" && targetSquare == "g1" && whiteKingSide){
@@ -343,15 +388,37 @@ if (moveValid == true){
   document.getElementById("move").innerHTML = move
   resetAll()
 }  
+
+else{
   moveOnScreen(currentSquare,targetSquare)
-  if (playerTurn == "white"){
+}
+
+
+if (playerTurn == "white"){
   playerTurn = "black"
+  document.getElementById("playerTurn").innerHTML = playerTurn
+
   }
   else{
       playerTurn = "white"
+      document.getElementById("playerTurn").innerHTML = playerTurn
   }
-  document.getElementById("playerTurn").innerHTML = playerTurn
+
+// ^Switching which side plays next
+
+  document.getElementById("board").setAttribute("class", "chessboardDisabled")
+  if (!(gameOver)){
   resetAll()
+  AIPlay()
+  }
+  else{
+    console.log(gameOver)
+    gameIsOver()
+    trainModel()
+  }
+// ^To let the AI make its move 
+
+
 }
 else  if (promotionPlaces.includes(move.slice(2,4)) && document.getElementById(currentSquare).getAttribute("piece") == "pawn"){
   document.getElementById("promotionDiv").setAttribute("class", "showPromotionDiv")
@@ -359,20 +426,24 @@ else  if (promotionPlaces.includes(move.slice(2,4)) && document.getElementById(c
   document.getElementById("promotionOptions").setAttribute("class", "showPromotionSelection")
   
 }
+//^This opens the option panel to promote a pawn
 
 else{
-  console.log("In valid move")
+  console.log("Invalid move")
   resetAll()
 }
+
 }
+
 }
 
     </script>
     <script src="{% static 'AJAX.js' %}"></script>
     <script src="{% static 'classesAndInstances.js' %}"></script>
     <script src="{% static 'startBoard.js' %}"></script>
+    <script src="{% static 'AIplaying.js' %}"></script>
+    <script src="{% static 'gameOver.js' %}"></script>
     <script src="{% static 'moveOnScreen.js' %}"></script>
-    <script src="{% static 'action.js' %}"></script>
     <script src="{% static 'promoter.js' %}"></script>
     <script src="{% static 'resetAllGlobals.js' %}"></script>
     <script src="{% static 'resetCurrentSquare.js' %}"></script>
