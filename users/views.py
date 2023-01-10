@@ -4,13 +4,15 @@ import sqlite3
 import tensorflow as tf
 import random
 import os
+from email.message import EmailMessage
+import ssl
+import smtplib
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' #Tells program to ignore an unimportant warning
 LoggedInUser = ""
 from playground.views import userSet
 class User:
-    def __init__(self,Username, Password,Firstname, Lastname, Email, relative):
+    def __init__(self,Username,Firstname, Lastname, Email, relative):
         self.Username = Username
-        self.Password = Password
         self.Firstname = Firstname
         self.Lastname = Lastname
         self.Email = Email
@@ -31,18 +33,6 @@ class User:
 
     def getrelative(self):
         return self.relative
-
-    def resetPassword(self):
-        conn = sqlite3.connect('users.db')
-        c = conn.cursor()
-        words = ["Chess", "Board", "Pawn", "Knights", "king"]
-        code = random.choice(words)
-        count = 0
-        for i in code:
-            count+= ord(i)
-        tempPass = self.Password - count
-        with conn:
-            c.execute("UPDATE UserInfo SET Password = (:tempPass)  WHERE Username = (:Username)", {'Username': self.Username, 'tempPass': tempPass})
 
     def updateRelative(self, newRelative):
         conn = sqlite3.connect('users.db')
@@ -124,9 +114,9 @@ def authenticate(request):
 
         if len(c.fetchall()) == 1:
             with conn:
-                record = c.execute("SELECT Username, Password, Firstname,Lastname, Email, relative FROM UserInfo WHERE Username =(:Username)", {'Username': username})
+                record = c.execute("SELECT Username,Firstname,Lastname, Email, relative FROM UserInfo WHERE Username =(:Username)", {'Username': username})
                 r = list(record)
-            User1 = User(r[0][0],r[0][1],r[0][2],r[0][3],r[0][4],r[0][5])
+            User1 = User(r[0][0],r[0][1],r[0][2],r[0][3],r[0][4])
             LoggedInUser = User1
             userSet(LoggedInUser)
             messages.success(request,f'User with username: {username} has been successfully logged in!' )
@@ -136,31 +126,32 @@ def authenticate(request):
             return redirect('login.html')
 
 def forgottenLogin(request):
-    global LoggedInUser
     username = request.POST['Username']
-    password = request.POST['Password']
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
 
-    if ((not username) or (not password)):
-        messages.error(request, f'Empty field/s submitted!')
+    if (not username):
+        messages.error(request, f'Please enter a User name...')
         return redirect('login.html')
+
     else :
         with conn:
-            c.execute("SELECT * FROM UserInfo WHERE Username = (:Username) AND Password = (:Password)", {'Username': username, 'Password':password})
-
+            c.execute("SELECT * FROM UserInfo WHERE Username = (:Username)", {'Username': username})
         if len(c.fetchall()) == 1:
             with conn:
-                record = c.execute("SELECT Username, Password, Firstname,Lastname, Email, relative FROM UserInfo WHERE Username =(:Username)", {'Username': username})
-                r = list(record)
-            User1 = User(r[0][0],r[0][1],r[0][2],r[0][3],r[0][4],r[0][5])
-            LoggedInUser = User1
-            userSet(LoggedInUser)
-            messages.success(request,f'User with username: {username} has been successfully logged in!' )
-            return render(request, 'mainpage.html', {'Username' : username})
+                    record = c.execute("SELECT Firstname,Lastname, Email FROM UserInfo WHERE Username =(:Username)", {'Username': username})
+                    r = list(record)
+            firstname = r[0][0]
+            lastname = r[0][1]
+            email_receiver = r[0][2]
+            send_email(email_receiver,firstname,lastname, username)
+            messages.success(request,f'Temporary password has been sent, please check your emails...' )
+            return render(request, 'login.html')
         else:
-            messages.error(request, 'Incorrect username and/or password...')
+            messages.error(request, 'Username was not found...')
             return redirect('forgotten.html')
+     
+
     
 
 def create_model():
@@ -175,7 +166,7 @@ def profile(request):
     if LoggedInUser == "":
         return render(request, 'mainpage.html')
     else:
-        return render(request, 'profile.html', {'Username' : LoggedInUser.getUsername()})
+        return render(request, 'profile.html', {'Username' : LoggedInUser.getUsername(), 'Firstname': LoggedInUser.getFirstname(), 'Lastname':LoggedInUser.getLastname(),'Email': LoggedInUser.getEmail()})
 
 
 def updateDetails(request):
@@ -248,7 +239,45 @@ def addUser(request):
     
     
 
-  
+def send_email(emailReceiver,firstName,lastName, username):
+    conn = sqlite3.connect('users.db')
+    c = conn.cursor()
+    email_sender = "theidealchessopponent@gmail.com" #Email created for sending temporary passwords
+    file = open('templates\EmailPass.txt','r') #Reading email token from file
+    email_password = file.readline()
+    email_receiver = emailReceiver
+    first_name = firstName
+    last_name = lastName
+    chess_stuff = ['chess', 'knight', 'king', 'rook', 'queen', 'bishop', 'pawn']
+    combined = first_name[0:1] + random.choice(chess_stuff) + random.choice(chess_stuff)[0:2] #Generating a random combination
+    tempPassword = "".join(random.sample(combined,len(combined))) #Scrambling the combination so it cannot be replicated
+
+    subject = "Temporary Password Request"
+    body = f"""
+    Hi {first_name} {last_name}, we have recieved a request to reset your password to a temporary one,
+    your temporary password is:
+
+                                    {tempPassword}
+    """
+    try:
+        email  = EmailMessage()
+        email['From'] = email_sender
+        email['To'] = email_receiver
+        email['Subject'] = subject
+        email.set_content(body) 
+
+        context = ssl.create_default_context()
+
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
+            smtp.login(email_sender,email_password)
+            smtp.sendmail(email_sender,email_receiver,email.as_string())
+        Password = hashPassword(username,tempPassword)
+        with conn:
+            c.execute("""UPDATE UserInfo SET Password = (:Password) WHERE Username = (:Username)""", 
+            {'Username': username,'Password': Password})
+    except:
+        pass
+
 
 
 
