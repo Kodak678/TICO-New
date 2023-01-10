@@ -9,7 +9,7 @@ import sqlite3
 Boardsnaps = []
 Boardscores = []
 board = chess.Board()
-# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' #Tells program to ignore an unimportant warning
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' #Tells program to ignore an unimportant warning
 
 def getScore(board,side):
     with chess.engine.SimpleEngine.popen_uci("templates\stockfish.exe") as stockfish: #Calling a well known chess AI to give an estimated board score at a certain position for a given board position
@@ -355,14 +355,11 @@ class User:
 
 
 # LoggedInUser = ""
-# conn = sqlite3.connect('test.db')
+# conn = sqlite3.connect('users.db')
 # c = conn.cursor()
-# record = c.execute("SELECT Username, Password, Firstname,Lastname, Email, relative FROM UserInfo WHERE Username = 'TICOOO' ")
+# record = c.execute("SELECT Username, Password, Firstname,Lastname, Email, relative FROM UserInfo")
 # for r in record:
-#     User1 = User(r[0],r[1],r[2],r[3],r[4],r[5])
-#     LoggedInUser = User1
-# x = list(record)
-# print(x)
+#     print(r)
 # conn.commit()
 # conn.close()
 
@@ -402,7 +399,7 @@ class User:
 
 # conn = sqlite3.connect('users.db')
 # c = conn.cursor()
-# records = c.execute("SELECT * FROM UserInfo")
+# records = c.execute("SELECT * FROM UserInfo") 
 # for record in records:
 #     print(record)
 # conn.commit()
@@ -425,10 +422,6 @@ class User:
 
 # 0.0006020597647875547
 # 0.0059497058391571045
-
-print(board)
-
-
 
 
 
