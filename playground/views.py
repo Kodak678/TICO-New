@@ -3,7 +3,6 @@ from django.shortcuts import render
 from django.http import  JsonResponse
 import chess
 import chess.engine
-import random
 import numpy
 import tensorflow as tf
 from keras import models
@@ -293,7 +292,7 @@ def home(request):
 
 # count = 0
 def AiMove(request):
-    global count
+    # global count
     temp = request.GET.get('stuff')
     legalEnPassant =  board.has_legal_en_passant()
     whiteKingSide = bool(chess.BB_H1)
@@ -326,7 +325,7 @@ def AiMove(request):
     #     moveAI = str(move)
     # except IndexError: #What to do if the the game is over (AI lost) 
     #     moveAI = ""
-    gameOver = board.is_game_over()
+    # gameOver = board.is_game_over()
 
     # try: #Playing against the most power chess AI at this time to get beaten by the AI to see what happens when the AI wins
     #     Stockfish = chess.engine.SimpleEngine.popen_uci("templates\stockfish.exe")
@@ -339,14 +338,14 @@ def AiMove(request):
     #     moveAI = ""  
     # gameOver = board.is_game_over()
 
-    # try: #This is my actual AI code
-    #     moveAI = (miniMax("TICO",board, 2, -numpy.inf, numpy.inf, False)[1])
-    #     board.push(moveAI)
-    #     SaveBoard(board)
-    # except Exception as e: #If the game is over and the AI lost then no AI move should be returned
-    #     pass
-    # gameOver = board.is_game_over()
-    # moveAI = str(moveAI)
+    try: #This is my actual AI code
+        moveAI = (miniMax("TICO",board, 2, -numpy.inf, numpy.inf, False)[1])
+        board.push(moveAI)
+        SaveBoard(board)
+    except Exception as e: #If the game is over and the AI lost then no AI move should be returned
+        pass
+    moveAI = str(moveAI)
+    gameOver = board.is_game_over()
 
 
     return JsonResponse({"legalEnPassant": legalEnPassant,
