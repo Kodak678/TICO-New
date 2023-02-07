@@ -3,12 +3,15 @@ from django.shortcuts import render
 from django.http import  JsonResponse
 import chess
 import chess.engine
-import random
 import numpy
 import tensorflow as tf
 from keras import models
 import os
+import random
+import absl.logging
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' #Tells program to ignore an unimportant warning
+absl.logging.set_verbosity(absl.logging.ERROR)  #Tells program to ignore an unimportant warning
+
 
 Boardsnaps = []
 Boardscores = []
@@ -43,7 +46,6 @@ def get_score(x):
 def SaveBoardData(Boardsnaps,Boardscores):
     numpy.save("ManyBoards.npy",Boardsnaps, True)
     numpy.save("ManyScores.npy",Boardscores, True)
-
 
 
 
@@ -143,7 +145,7 @@ def ConvertToAIboard(board):
     board.turn = RealTurn
 
     #The above chunk of code turns all the squares that black and white can capture a piece on and converts it into into a square index
-    #The chunck of code saves the current player turn in a temporray variable to retore to once its simulated the board from the perspective of both players
+    #The chunck of code saves the current player turn in a temporay variable to retore to once its simulated the board from the perspective of both players
 
 
     return(AIboard)
@@ -207,13 +209,13 @@ def train_model(request):
     y = numpy.load("Scores.npy")
     y = numpy.asarray(y / abs(y).max() / 2 + 0.5, dtype=numpy.float32) # normalization (0 - 1)
 
-    x_test = numpy.load("TestBoards.npy")
-    y_test = numpy.load("TestScores.npy")
-    y_test = numpy.asarray(y_test / abs(y_test).max() / 2 + 0.5, dtype=numpy.float32) # normalization (0 - 1)
+    x_test = numpy.load("ManyBoards.npy")
+    y_test = numpy.load("ManyScores.npy")
+    y_test = numpy.asarray(y_test / abs(y_test)/2 +0.5 , dtype=numpy.float32) # normalization (0 - 1)
 
     model.fit(x,y,epochs=100)
     results = model.evaluate(x_test, y_test, batch_size=128)
-    relative = (( 0.0006020597647875547 - results ) / 0.0006020597647875547) *100
+    relative = results[1] *100
     User.updateRelative(relative)
     model.save(f'./models/{User.getUsername()}')
     return JsonResponse({"trained": True},status = 200)
@@ -233,12 +235,18 @@ def isValid(move):
 
 
 def boardStates(request):
+    global board
     temp = request.GET.get('hide')
     legalEnPassant =  board.has_legal_en_passant()
-    whiteKingSide = bool(chess.BB_H1)
-    whiteQueenSide = bool(chess.BB_A1)
-    blackQueenSide = bool(chess.BB_A8)
-    blackKingSide = bool(chess.BB_H8)
+    whiteKingSide = board.has_kingside_castling_rights(True)
+    whiteQueenSide = board.has_queenside_castling_rights(True)
+    blackQueenSide = board.has_queenside_castling_rights(False)
+    blackKingSide = board.has_kingside_castling_rights(False)
+
+
+
+
+
     return JsonResponse({"legalEnPassant": legalEnPassant,
     "whiteKingSide": whiteKingSide,
     "whiteQueenSide": whiteQueenSide,
@@ -293,15 +301,17 @@ def home(request):
 
 # count = 0
 def AiMove(request):
-    global count
+    # global count
+    global board
     temp = request.GET.get('stuff')
     legalEnPassant =  board.has_legal_en_passant()
-    whiteKingSide = bool(chess.BB_H1)
-    whiteQueenSide = bool(chess.BB_A1)
-    blackQueenSide = bool(chess.BB_A8)
-    blackKingSide = bool(chess.BB_H8)
+    whiteKingSide = board.has_kingside_castling_rights(True)
+    whiteQueenSide = board.has_queenside_castling_rights(True)
+    blackQueenSide = board.has_queenside_castling_rights(False)
+    blackKingSide = board.has_kingside_castling_rights(False)
     moveAI = ""
     
+
     # moves = ['d7d5','d5c4','c4b3','b3a2','a2b1n'] #A specififc set of moves to test the AI can promote pawns as expected
     # moves = ['d7d5','d5e4','e4f3','f3g2','g2h1q'] #A specififc set of moves to test the AI can promote pawns as expected
 
@@ -314,18 +324,20 @@ def AiMove(request):
     # moves = ['e7e6','f8e7','g8f6','e8g8'] #Castling for white and black kingside
     # moves = ['d7d5','c8e6','b8c6','d8d7','e8c8'] #Castling for white and black queenside
 
+    # moves = ['h7h6','g7g6','f7f6','e7e6','d7d6','c7c6','b7b6','a7a6','h6h5','g6g5','f6f5','d6d5','b6b5','f8h6','d8d7','d7d8','d8d7','d7d8','d8d7','d7d8','d8d7','d7d8','d8d7','d7d8','d8d7','d7d8','g5g4','d8d7','f5f4','f4f3','d7f7','d5d4','d4d3','b5b4','b4b3','a6a5','a5a4','e6e5','e5e4','c6c5','e8e7']
+
     # board.push_uci(moves[count])
     # moveAI = moves[count]
     # count += 1
 
-    # try: #Playing against a random AI which is easy to beat for testing what happens when the player wins
-    #     child_nodes = list(board.legal_moves)
-    #     move = random.choice(child_nodes)
-    #     board.push(move)
-    #     SaveBoard(board)
-    #     moveAI = str(move)
-    # except IndexError: #What to do if the the game is over (AI lost) 
-    #     moveAI = ""
+    try: #Playing against a random AI which is easy to beat for testing what happens when the player wins
+        child_nodes = list(board.legal_moves)
+        move = random.choice(child_nodes)
+        board.push(move)
+        SaveBoard(board)
+        moveAI = str(move)
+    except IndexError: #What to do if the the game is over (AI lost) 
+        moveAI = ""
     gameOver = board.is_game_over()
 
     # try: #Playing against the most power chess AI at this time to get beaten by the AI to see what happens when the AI wins
@@ -345,8 +357,8 @@ def AiMove(request):
     #     SaveBoard(board)
     # except Exception as e: #If the game is over and the AI lost then no AI move should be returned
     #     pass
-    # gameOver = board.is_game_over()
     # moveAI = str(moveAI)
+    # gameOver = board.is_game_over()
 
 
     return JsonResponse({"legalEnPassant": legalEnPassant,
