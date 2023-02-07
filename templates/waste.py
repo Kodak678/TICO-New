@@ -215,10 +215,4 @@ def miniMax(user,board, depth, alpha, beta, maxscorer):
 
 # print(AImove)
 
-def create_model():
-    model = tf.keras.models.Sequential([tf.keras.layers.Flatten(input_shape = (14,8,8)), 
-                                        tf.keras.layers.Dense(128, activation=tf.nn.relu), 
-                                        tf.keras.layers.Dense(1, activation=tf.nn.sigmoid)])
-    model.compile(optimizer=tf.keras.optimizers.Adam(5e-4), loss= 'mean_squared_error')
-    return model
 

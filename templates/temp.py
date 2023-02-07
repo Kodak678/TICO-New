@@ -9,7 +9,7 @@ import sqlite3
 Boardsnaps = []
 Boardscores = []
 board = chess.Board()
-# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' #Tells program to ignore an unimportant warning
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' #Tells program to ignore an unimportant warning
 
 def getScore(board,side):
     with chess.engine.SimpleEngine.popen_uci("templates\stockfish.exe") as stockfish: #Calling a well known chess AI to give an estimated board score at a certain position for a given board position
@@ -213,15 +213,14 @@ y_test = numpy.load("TestScores.npy")
 y_test = numpy.asarray(y_test / abs(y_test).max() / 2 + 0.5, dtype=numpy.float32) # normalization (0 - 1)
 
 
-
 def create_model():
     model = tf.keras.models.Sequential([tf.keras.layers.Flatten(input_shape = (14,8,8)), 
-                                        tf.keras.layers.Dense(128, activation=tf.nn.relu), 
-                                        tf.keras.layers.Dense(1, activation=tf.nn.sigmoid)])
-    model.compile(optimizer=tf.keras.optimizers.Adam(5e-4), loss= 'mean_squared_error')
+                                        tf.keras.layers.Dense(128, activation=tf.keras.activations.relu), 
+                                        tf.keras.layers.Dense(32, activation=tf.keras.activations.relu),    
+                                        tf.keras.layers.Dense(1, activation=tf.keras.activations.sigmoid),
+                                        ])
+    model.compile(optimizer=tf.keras.optimizers.Adam(), loss = tf.keras.losses.mean_squared_error, metrics=["accuracy"])
     return model
-
-
 
 def train_model(user):
     x = numpy.load("Boards.npy")
@@ -235,8 +234,8 @@ def train_model(user):
 # x = numpy.load("ManyBoards.npy")
 # y = numpy.load("ManyScores.npy")
 # y = numpy.asarray(y / abs(y).max() / 2 + 0.5, dtype=numpy.float32) # normalization (0 - 1)
-
-# user = "bat"
+# model = create_model()
+# user = "TICO"
 # model = models.load_model(f'./models/{user}')
 # model.fit(x,y,epochs=100)
 # model = create_model()
@@ -355,14 +354,11 @@ class User:
 
 
 # LoggedInUser = ""
-# conn = sqlite3.connect('test.db')
+# conn = sqlite3.connect('users.db')
 # c = conn.cursor()
-# record = c.execute("SELECT Username, Password, Firstname,Lastname, Email, relative FROM UserInfo WHERE Username = 'TICOOO' ")
+# record = c.execute("SELECT * FROM UserInfo")
 # for r in record:
-#     User1 = User(r[0],r[1],r[2],r[3],r[4],r[5])
-#     LoggedInUser = User1
-# x = list(record)
-# print(x)
+#     print(r)
 # conn.commit()
 # conn.close()
 
@@ -402,7 +398,7 @@ class User:
 
 # conn = sqlite3.connect('users.db')
 # c = conn.cursor()
-# records = c.execute("SELECT * FROM UserInfo")
+# records = c.execute("SELECT * FROM UserInfo") 
 # for record in records:
 #     print(record)
 # conn.commit()
@@ -425,10 +421,6 @@ class User:
 
 # 0.0006020597647875547
 # 0.0059497058391571045
-
-print(board)
-
-
 
 
 
