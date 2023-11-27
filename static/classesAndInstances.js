@@ -1,8 +1,7 @@
 class Piece {
-    constructor(name, color,value,symbol) {
+    constructor(name, color,symbol) {
       this.name = name;
       this.color = color;
-      this.value = value;
       this.symbol = symbol;
     }
     getSymbol(){
@@ -14,40 +13,37 @@ class Piece {
     getColor(){
         return this.color;
     }
-    getValue(){
-        return this.value;
-    }
   }
 
 
 class Pawn extends Piece {
 constructor(color,symbol) {
-    super("pawn", color , 10, symbol);   
+    super("pawn", color , symbol);   
 }
 }
 class Rook extends Piece {
 constructor(color,symbol) {
-    super("rook", color , 50, symbol);   
+    super("rook", color , symbol);   
 }
 }
 class Knight extends Piece {
 constructor(color,symbol) {
-    super("knight", color , 30, symbol);   
+    super("knight", color , symbol);   
 }
 }
 class Bishop extends Piece {
 constructor(color,symbol) {
-    super("bishop", color , 30, symbol);   
+    super("bishop", color , symbol);   
 }
 }
 class King extends Piece {
 constructor(color,symbol) {
-    super("king", color , 900, symbol);   
+    super("king", color , symbol);   
 }
 }
 class Queen extends Piece {
 constructor(color,symbol) {
-    super("queen", color , 90, symbol);   
+    super("queen", color , symbol);   
 }
 }
 

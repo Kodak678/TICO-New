@@ -59,32 +59,19 @@
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
     }
+    input.larger {
+      width: 50px;
+      height: 50px;
+    }
   </style>
   <body>
     <a type="a" class= "mainpagelink" href="mainpage.html">Back to Mainpage</a>
     {% if Username %}
     <h1>You are logged in as: {{Username}}</h1>
     {% endif %}
-    <form action="updateDetails" method="post">
-      {% csrf_token %}
-      <label for="FirstName">First name:</label><br />
-      <input type="text" id="FirstName" name="FirstName" value="" /><br />
-      
-      <label for="LastName">Last name:</label><br />
-      <input type="text" id="LastName" name="LastName" value="" /><br />
-      
-      <label for="Email">Email:</label><br />
-      <input type="text" id="Email" name="Email" value="" /><br />
-      
-      <label for="Password">Password:</label><br />
-      <input type="password" id="pass" name="Password" value="" /><br /><br />
-      
-
-      <label for="PasswordRepeat">Repeat Password:</label><br />
-      <input type="password" id="pass" name="PasswordRepeat" value="" /><br /><br />
-
-      <input type="submit" value="Submit"/>
-    </form>
+    <h2>Please change any details on our system
+      and press the Update Details button
+    </h2>
     <div class="messages">
       {% if messages %}
         {% for message in messages %}
@@ -94,5 +81,35 @@
         {% endfor %}
       {% endif %}
     </div>
+    <form action="updateDetails" method="post">
+      {% csrf_token %}
+      <label for="FirstName">First name:</label><br />
+      <input type="text" id="FirstName" name="FirstName" value="{{Firstname}}" /><br />
+      
+      <label for="LastName">Last name:</label><br />
+      <input type="text" id="LastName" name="LastName" value="{{Lastname}}" /><br />
+      
+      <label for="Email">Email:</label><br />
+      <input type="text" id="Email" name="Email" value="{{Email}}" /><br />
+      
+      <label for="Password">Password:</label><br />  <input class = "larger" type="checkbox" onclick="ShowPassword()">
+      <input type="password" id="pass" name="Password" value="" /><br /><br />
+
+
+      <label for="PasswordRepeat">Repeat Password:</label><br />
+      <input type="password" id="pass" name="PasswordRepeat" value="" /><br /><br />
+
+      <input type="submit" value="Update Details"/>
+    </form>
   </body>
+  <script>
+    function ShowPassword() {
+  var x = document.getElementById("pass");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+}
+  </script>
 </html>

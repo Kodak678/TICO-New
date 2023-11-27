@@ -314,7 +314,7 @@ function action(event){
     targetSquare = String(event.target.id);
     
     move = currentSquare + targetSquare
-    //If there was a current square than the target square bceomes the cliked on element
+    //If there was a current square than the target square bceomes the clicked on element
     
 $.when(getStates()).then(function successHandler(response){
     
@@ -327,7 +327,7 @@ $.when(getStates()).then(function successHandler(response){
  function errorHandler(){
    console.log("Error has occurred")
  })
-//Getting whether each side has casling rights
+//Getting whether each side has castling rights and legal enpassant rights
 
 
 $.when(validMove(move)).then(function successHandler(response){
@@ -346,7 +346,6 @@ if (moveValid == true){
   
   document.getElementById("move").innerHTML = move
   if (document.getElementById(currentSquare).getAttribute("piece") == "pawn" && document.getElementById(targetSquare).getAttribute("piece") == "" && enPassantPositions.includes(move.slice(2,4)) && legalEnPassant){
-    console.log("enpassanting")
              if (document.getElementById(currentSquare).getAttribute("player") == "white"){
                  document.getElementById(move.slice(2,3) + String((Number(move.slice(3,4))-1))).innerHTML = ""
                  document.getElementById(move.slice(2,3) + String((Number(move.slice(3,4))-1))).setAttribute("piece","")
@@ -367,12 +366,14 @@ if (moveValid == true){
   moveOnScreen(currentSquare,targetSquare)
   document.getElementById("move").innerHTML = move
   resetAll()
+  //The above if statement deals with white kingside castling on the GUI side
   }
   else if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "white" && targetSquare == "c1" && whiteQueenSide){
   moveOnScreen("a1","d1")
   moveOnScreen(currentSquare,targetSquare)
   document.getElementById("move").innerHTML = move
   resetAll()
+  //The above if statement deals with white queenside castling on the GUI side
   }
 
   else if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "black" && targetSquare == "c8" && blackQueenSide){
@@ -380,6 +381,7 @@ if (moveValid == true){
   moveOnScreen(currentSquare,targetSquare)
   document.getElementById("move").innerHTML = move
   resetAll()
+  //The above if statement deals with black queenside castling on the GUI side
   }
 
   else if (document.getElementById(currentSquare).getAttribute("piece") == "king" && document.getElementById(currentSquare).getAttribute("player") == "black" && targetSquare == "g8" && blackKingSide){
@@ -387,10 +389,12 @@ if (moveValid == true){
   moveOnScreen(currentSquare,targetSquare)
   document.getElementById("move").innerHTML = move
   resetAll()
+  //The above if statement deals with black kingside castling on the GUI side
 }  
 
 else{
   moveOnScreen(currentSquare,targetSquare)
+  //If the chess move is just a regular move then simply moving it is enough
 }
 
 
@@ -426,7 +430,10 @@ else  if (promotionPlaces.includes(move.slice(2,4)) && document.getElementById(c
   document.getElementById("promotionOptions").setAttribute("class", "showPromotionSelection")
   
 }
-//^This opens the option panel to promote a pawn
+//^This opens the option panel to promote a pawn..
+//^As a valid promotion includes a promoting piece on the end...
+//But moveValid would only contain the current and target squares and not the promoting piece
+//which is suppled by the user when they choose a piece in the promotionDiv element
 
 else{
   console.log("Invalid move")

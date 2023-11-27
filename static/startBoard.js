@@ -6,7 +6,7 @@ let playerTurn = "white"
 
 let move = ""
 
-let playerSide = ""
+
 
 
 
@@ -32,7 +32,9 @@ function reset_game(){
         document.getElementById(i).setAttribute("piece",BlackPawn.getName())
         document.getElementById(i).setAttribute("player",BlackPawn.getColor())
     };
-    
+    //The .innerHTML stores what is displayed to the user on the screen
+    //The piece attribute stores what type of piece e.g. pawn is on the square
+    //The player attribute stores whether the piece is black or white
     
     BlackRooks = ["a8","h8"];
     for (let i of BlackRooks) {
@@ -117,4 +119,4 @@ function reset_game(){
 
   
     
-reset_game()
+reset_game() //Everytime the page is refreshed or left: the board resets visibly and on the back end
